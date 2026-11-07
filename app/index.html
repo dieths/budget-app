@@ -38,8 +38,13 @@ header h1{font-size:24px;margin:0;font-weight:800;letter-spacing:-.02em}
 
 /* Hero */
 .hero{background:var(--hero);color:#fff;border-radius:24px;padding:18px 16px 16px 18px;display:flex;gap:8px;align-items:flex-end;
-  box-shadow:0 10px 30px rgba(124,58,237,.30);margin-bottom:12px}
-.hero .lbl{font-size:13px;opacity:.85}
+  box-shadow:0 10px 30px var(--glow,rgba(124,58,237,.30));margin-bottom:12px;transition:background .4s}
+/* Farbe je nach Plan-Status */
+.hero.ahead{background:linear-gradient(135deg,#047857 0%,#059669 50%,#0d9488 100%);--glow:rgba(5,150,105,.35)}
+.hero.onplan{background:var(--hero)}
+.hero.behind{background:linear-gradient(135deg,#ea580c 0%,#e11d48 60%,#be123c 100%);--glow:rgba(225,29,72,.35)}
+.hero .lbl{font-size:13px;opacity:.9;display:flex;flex-wrap:wrap;gap:4px 8px;align-items:center;white-space:nowrap}
+.hero .status{background:rgba(255,255,255,.22);border-radius:999px;padding:3px 9px;font-size:12px;font-weight:700;white-space:nowrap}
 .hero .tot{font-size:30px;font-weight:800;letter-spacing:-.02em;margin:2px 0 8px}
 .hero .day{display:inline-block;background:rgba(255,255,255,.2);border-radius:999px;padding:5px 11px;font-size:14px;font-weight:700}
 .hero .goal{margin-top:8px;font-size:13px;font-weight:600}
@@ -383,9 +388,16 @@ function render() {
     if (!goal) goal = '⚠️ Budget aufgebraucht – jeder gesparte Euro zählt';
   }
   const fc = forecast(), fm = monthly > 0 ? medalFor(fc / monthly) : null;
-  $('hero').innerHTML = `<div class="hero">
+  // Plan-Status: Vergleich mit dem Stand bei gleichmäßigem Ausgeben (±3 % Toleranz)
+  const planDiff = total - monthly * dl / daysInMonth(), tol = Math.max(1, monthly * 0.03);
+  const st = needTopup || monthly <= 0 ? { c: 'onplan', t: '' }
+    : planDiff > tol ? { c: 'ahead', t: `▲ ${eur0.format(planDiff)} vor Plan`, col: '#059669' }
+    : planDiff < -tol ? { c: 'behind', t: `▼ ${eur0.format(-planDiff)} über Plan`, col: '#e11d48' }
+    : { c: 'onplan', t: '● im Plan', col: '#4f46e5' };
+  document.querySelector('meta[name=theme-color]').content = st.col || '#4f46e5';
+  $('hero').innerHTML = `<div class="hero ${st.c}">
       <div style="flex:1;min-width:0">
-        <div class="lbl">Noch verfügbar</div>
+        <div class="lbl">Noch verfügbar ${st.t ? `<span class="status num">${st.t}</span>` : ''}</div>
         <div class="tot num">${eur.format(total)}</div>
         <div class="day num">≈ ${eur.format(perDay(total))} / Tag</div>
         ${goal ? `<div class="goal num">${goal}</div>` : ''}
@@ -415,7 +427,7 @@ function render() {
       <div class="mid">
         <div class="name">${b.emoji} ${esc(b.name)}</div>
         <div class="sub num">von ${eur0.format(b.monthly)} im Monat</div>
-        <div class="tags"><span class="tag num" style="background:${tint(b.color, .15)};color:${b.color}">≈ ${eur.format(perDay(b.balance))}/Tag</span>${b.monthly > 0 && !needTopup ? `<span class="tag ${diff >= 0 ? 'up' : 'down'} num">${diff >= 0 ? '▲ ' + eur0.format(diff) + ' vor Plan' : '▼ ' + eur0.format(-diff) + ' hinter Plan'}</span>` : ''}</div>
+        <div class="tags"><span class="tag num" style="background:${tint(b.color, .15)};color:${b.color}">≈ ${eur.format(perDay(b.balance))}/Tag</span>${b.monthly > 0 && !needTopup ? `<span class="tag ${diff >= 0 ? 'up' : 'down'} num">${diff >= 0 ? '▲ ' + eur0.format(diff) + ' vor Plan' : '▼ ' + eur0.format(-diff) + ' über Plan'}</span>` : ''}</div>
       </div>
       <div class="bal num ${b.balance < 0 ? 'neg' : ''}">${eur.format(b.balance)}</div>`;
     el.onclick = () => openDetail(b.id);
