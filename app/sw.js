@@ -1,4 +1,4 @@
-const CACHE = 'budget-v4';
+const CACHE = 'budget-v5';
 const FILES = ['./', 'index.html', 'manifest.json', 'icon.svg', 'icon-192.png', 'icon-512.png'];
 
 self.addEventListener('install', e => {
@@ -9,9 +9,9 @@ self.addEventListener('activate', e => {
     Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
   ).then(() => self.clients.claim()));
 });
-// Netzwerk zuerst (für Updates), offline aus dem Cache
+// App-Dateien: Netzwerk zuerst, offline aus dem Cache. Sync-Daten nie cachen.
 self.addEventListener('fetch', e => {
-  if (e.request.method !== 'GET') return;
+  if (e.request.method !== 'GET' || new URL(e.request.url).pathname.includes('/api/')) return;
   e.respondWith(
     fetch(e.request).then(r => {
       const copy = r.clone();
