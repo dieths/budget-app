@@ -15,13 +15,14 @@
 <style>
 :root{
   --bg:#f3f4fb;--card:#fff;--text:#111827;--muted:#6b7280;--line:#e5e7eb;
-  --accent:#4f46e5;--neg:#e11d48;--warn:#f59e0b;--ok:#10b981;
+  --accent:#4f46e5;--neg:#e11d48;--warn:#f59e0b;--ok:#059669;
   --hero:linear-gradient(135deg,#4f46e5 0%,#7c3aed 50%,#db2777 100%);
+  --gold:linear-gradient(135deg,#f59e0b,#fbbf24);
   --shadow:0 4px 18px rgba(79,70,229,.10);
 }
 @media (prefers-color-scheme:dark){:root{
   --bg:#0b1020;--card:#161d33;--text:#f1f5f9;--muted:#94a3b8;--line:#2a3350;
-  --accent:#818cf8;--neg:#fb7185;--shadow:0 4px 18px rgba(0,0,0,.35);
+  --accent:#818cf8;--neg:#fb7185;--ok:#34d399;--shadow:0 4px 18px rgba(0,0,0,.35);
   --hero:linear-gradient(135deg,#4338ca 0%,#6d28d9 50%,#be185d 100%);
 }}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -36,29 +37,39 @@ header h1{font-size:24px;margin:0;font-weight:800;letter-spacing:-.02em}
 .icon-btn{width:44px;height:44px;border-radius:14px;font-size:20px;background:var(--card);box-shadow:var(--shadow);color:var(--muted)}
 
 /* Hero */
-.hero{background:var(--hero);color:#fff;border-radius:24px;padding:18px;display:flex;gap:16px;align-items:center;
-  box-shadow:0 10px 30px rgba(124,58,237,.30);margin-bottom:14px}
+.hero{background:var(--hero);color:#fff;border-radius:24px;padding:18px 16px 16px 18px;display:flex;gap:8px;align-items:flex-end;
+  box-shadow:0 10px 30px rgba(124,58,237,.30);margin-bottom:12px}
 .hero .lbl{font-size:13px;opacity:.85}
 .hero .tot{font-size:30px;font-weight:800;letter-spacing:-.02em;margin:2px 0 8px}
-.hero .day{display:inline-block;background:rgba(255,255,255,.18);border-radius:999px;padding:5px 11px;font-size:14px;font-weight:600}
-.hero .left{font-size:12px;opacity:.85;margin-top:6px}
-.donut{flex:none;width:112px;height:112px}
-.donut text{fill:#fff}
+.hero .day{display:inline-block;background:rgba(255,255,255,.2);border-radius:999px;padding:5px 11px;font-size:14px;font-weight:700}
+.hero .goal{margin-top:8px;font-size:13px;font-weight:600}
+.hero .left{font-size:12px;opacity:.8;margin-top:4px}
+.hero .pile{flex:none;width:130px}
 
-.banner{background:var(--card);border-left:5px solid var(--warn);border-radius:16px;padding:12px 14px;margin:0 0 14px;
-  display:flex;align-items:center;justify-content:space-between;gap:10px;box-shadow:var(--shadow)}
-.banner button{background:var(--warn);color:#fff;padding:9px 13px;border-radius:12px;font-weight:700;white-space:nowrap}
+/* Ansporn-Leiste */
+.motiv{display:flex;gap:10px;margin-bottom:12px}
+.motiv>div{flex:1;background:var(--card);border-radius:18px;padding:10px 12px;box-shadow:var(--shadow);display:flex;align-items:center;gap:10px;min-width:0}
+.motiv .pig{font-size:30px}
+.motiv b{display:block;font-size:16px}
+.motiv small{color:var(--muted);font-size:12px}
+.medals{font-size:20px;letter-spacing:2px;white-space:nowrap;overflow:hidden}
+
+.banner{background:var(--gold);color:#3b2400;border-radius:18px;padding:12px 14px;margin:0 0 12px;
+  display:flex;align-items:center;justify-content:space-between;gap:10px;box-shadow:0 6px 20px rgba(245,158,11,.35);font-weight:600}
+.banner button{background:#fff;color:#92400e;padding:9px 13px;border-radius:12px;font-weight:800;white-space:nowrap}
 
 .list{display:grid;gap:12px}
-.budget{background:var(--card);border-radius:20px;padding:14px;width:100%;text-align:left;display:flex;gap:14px;align-items:center;box-shadow:var(--shadow)}
-.ring{flex:none;width:56px;height:56px;position:relative}
-.ring svg{position:absolute;inset:0}
-.ring .emo{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:24px}
+.budget{background:var(--card);border-radius:20px;padding:12px 14px 12px 10px;width:100%;text-align:left;display:flex;gap:10px;align-items:center;
+  box-shadow:var(--shadow);border-left:5px solid var(--c)}
+.budget .pile{flex:none;width:68px}
 .budget .mid{flex:1;min-width:0}
 .budget .name{font-weight:700;font-size:17px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .budget .sub{color:var(--muted);font-size:13px}
-.budget .pd{display:inline-block;margin-top:5px;font-size:13px;font-weight:700;padding:3px 9px;border-radius:999px}
-.budget .bal{font-weight:800;font-size:19px;text-align:right;white-space:nowrap}
+.tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:5px}
+.tag{font-size:12px;font-weight:700;padding:3px 8px;border-radius:999px;white-space:nowrap}
+.tag.up{background:rgba(5,150,105,.13);color:var(--ok)}
+.tag.down{background:rgba(225,29,72,.12);color:var(--neg)}
+.budget .bal{font-weight:800;font-size:18px;text-align:right;white-space:nowrap}
 .neg{color:var(--neg)}
 
 .empty{text-align:center;color:var(--muted);padding:40px 16px}
@@ -89,6 +100,7 @@ header h1{font-size:24px;margin:0;font-weight:800;letter-spacing:-.02em}
 .chip small{color:var(--muted);font-size:12px}
 .primary{width:100%;padding:16px;border-radius:16px;background:linear-gradient(135deg,#f43f5e,#db2777);color:#fff;font-weight:800;font-size:17px}
 .primary.blue{background:var(--hero)}
+.primary.gold{background:var(--gold);color:#3b2400}
 .primary:disabled{opacity:.35}
 .secondary{width:100%;padding:14px;border-radius:16px;background:var(--card);font-weight:600;margin-top:8px;box-shadow:var(--shadow)}
 .danger{color:var(--neg)}
@@ -102,12 +114,12 @@ input.field{width:100%;padding:12px 14px;font-size:17px;border-radius:14px;borde
 .em{font-size:22px;height:42px;border-radius:12px;background:var(--card)}
 .em.sel{outline:2px solid var(--accent)}
 
-.dhead{border-radius:20px;padding:16px;color:#fff;text-align:center;margin-bottom:6px}
-.dhead .e{font-size:34px}
-.dhead .b{font-size:32px;font-weight:800}
-.dhead .s{font-size:14px;opacity:.9}
+.dhead{border-radius:20px;padding:14px;color:#fff;text-align:center;margin-bottom:6px}
+.dhead .pile{width:150px;margin:0 auto}
+.dhead .b{font-size:30px;font-weight:800}
+.dhead .s{font-size:14px;opacity:.92}
 .stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin:10px 0}
-.stat{background:var(--card);border-radius:14px;padding:10px;text-align:center;box-shadow:var(--shadow)}
+.stat{background:var(--card);border-radius:14px;padding:10px 6px;text-align:center;box-shadow:var(--shadow)}
 .stat b{display:block;font-size:15px}
 .stat small{color:var(--muted);font-size:11px}
 .tx{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
@@ -119,10 +131,27 @@ input.field{width:100%;padding:12px 14px;font-size:17px;border-radius:14px;borde
 .setrow{display:flex;justify-content:space-between;align-items:center;background:var(--card);
   padding:12px 14px;border-radius:14px;margin-bottom:8px;width:100%;text-align:left;box-shadow:var(--shadow);gap:10px}
 .section{font-size:12px;color:var(--muted);margin:20px 0 8px;text-transform:uppercase;letter-spacing:.06em;font-weight:700}
+
+/* Monatsbilanz */
+.bil{text-align:center}
+.bil .medal{font-size:64px;line-height:1;margin-top:4px}
+.bil .pile{width:190px;margin:4px auto 0}
+.bil .big{font-size:30px;font-weight:800;margin:4px 0}
+.bil p{color:var(--muted);margin:0 0 12px}
+.bilrow{display:flex;justify-content:space-between;padding:8px 2px;border-bottom:1px solid var(--line);font-size:15px}
+.scale{display:flex;justify-content:center;gap:14px;font-size:13px;color:var(--muted);margin:10px 0 14px}
+
 .toast{position:fixed;left:16px;right:16px;bottom:calc(114px + env(safe-area-inset-bottom));background:#111827;color:#fff;
-  border-radius:14px;padding:12px 14px;display:none;justify-content:space-between;align-items:center;z-index:20;max-width:608px;margin:0 auto}
+  border-radius:14px;padding:12px 14px;display:none;justify-content:space-between;align-items:center;z-index:20;max-width:608px;margin:0 auto;gap:10px}
 .toast.show{display:flex}
 .toast button{color:#a5b4fc;font-weight:700}
+
+/* Konfetti */
+.confetti{position:fixed;top:-20px;width:10px;height:14px;border-radius:2px;z-index:30;pointer-events:none;
+  animation:fall linear forwards}
+@keyframes fall{to{transform:translateY(110vh) rotate(720deg);opacity:.7}}
+@keyframes pop{0%{transform:scale(.4)}60%{transform:scale(1.15)}100%{transform:scale(1)}}
+.pop{animation:pop .5s ease}
 </style>
 </head>
 <body>
@@ -132,8 +161,9 @@ input.field{width:100%;padding:12px 14px;font-size:17px;border-radius:14px;borde
   <button class="icon-btn" id="btnSettings" aria-label="Budgets verwalten">⚙︎</button>
 </header>
 
-<div id="hero"></div>
 <div id="banner"></div>
+<div id="hero"></div>
+<div id="motiv"></div>
 <div class="list" id="list"></div>
 
 <button class="fab" id="fab" aria-label="Ausgabe erfassen">−</button>
@@ -160,6 +190,12 @@ input.field{width:100%;padding:12px 14px;font-size:17px;border-radius:14px;borde
   <button class="secondary" id="dEdit">Budget bearbeiten</button>
 </div>
 
+<!-- Monatsbilanz -->
+<div class="sheet" id="sBilanz">
+  <div class="grip"></div>
+  <div class="bil" id="bilBody"></div>
+</div>
+
 <!-- Einstellungen -->
 <div class="sheet" id="sSettings">
   <div class="grip"></div>
@@ -168,6 +204,9 @@ input.field{width:100%;padding:12px 14px;font-size:17px;border-radius:14px;borde
   <button class="secondary" id="btnAdd">+ Neues Budget</button>
   <div class="section">Aufstocken</div>
   <button class="secondary" id="btnTopupAll">Alle Budgets jetzt aufstocken</button>
+  <div class="section">Sparschwein</div>
+  <div class="setrow"><span>🐷 Gespart</span><b class="num" id="setSavings"></b></div>
+  <button class="secondary" id="btnSavingsOut">Betrag aus dem Sparschwein nehmen</button>
   <div class="section">Sicherung</div>
   <button class="secondary" id="btnExport">Daten exportieren</button>
   <button class="secondary" id="btnImport">Daten importieren</button>
@@ -199,13 +238,18 @@ input.field{width:100%;padding:12px 14px;font-size:17px;border-radius:14px;borde
 const KEY = 'budget-app-v1';
 const COLORS = ['#6366f1', '#ec4899', '#f59e0b', '#10b981', '#06b6d4', '#8b5cf6', '#ef4444', '#84cc16', '#f97316', '#0ea5e9'];
 const EMOJIS = ['🛒', '🍽️', '☕', '⛽', '🚗', '🏠', '💡', '📱', '👕', '🎁', '🎉', '🎮', '📚', '🐾', '✈️', '💊'];
+// Medaillen: Anteil vom Monatsbudget, der am Monatsende übrig ist
+const MEDALS = [{ min: 0.20, e: '🥇', n: 'Gold' }, { min: 0.10, e: '🥈', n: 'Silber' }, { min: 0.0001, e: '🥉', n: 'Bronze' }];
 const eur = new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' });
+const eur0 = new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 });
 const $ = id => document.getElementById(id);
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const monthKey = (d = new Date()) => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
 const monthName = (d = new Date()) => d.toLocaleDateString('de-DE', { month: 'long' });
+const monthNameOf = mk => { const [y, m] = mk.split('-').map(Number); return monthName(new Date(y, m - 1, 1)); };
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
 const round = n => Math.round(n * 100) / 100;
+const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
 const parseAmt = s => {
   s = String(s || '').trim().replace(/[€\s]/g, '');
   if (s.includes(',')) s = s.replace(/\./g, '').replace(',', '.');
@@ -215,19 +259,20 @@ const parseAmt = s => {
 const fmtInput = n => n.toFixed(2).replace('.', ',');
 const tint = (hex, a) => hex + Math.round(a * 255).toString(16).padStart(2, '0');
 
-// Verbleibende Tage im Monat, heute mitgezählt
-function daysLeft(d = new Date()) {
-  const dim = new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate();
-  return dim - d.getDate() + 1;
-}
+// ---------- Zeit ----------
+const daysInMonth = (d = new Date()) => new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate();
+const daysLeft = (d = new Date()) => daysInMonth(d) - d.getDate() + 1;   // heute mitgezählt
 const perDay = bal => Math.max(0, bal) / daysLeft();
+const medalFor = frac => MEDALS.find(m => frac >= m.min) || null;
 
 // ---------- Daten ----------
 let S;
 function load() {
   try { S = JSON.parse(localStorage.getItem(KEY)); } catch { S = null; }
   if (!S || !Array.isArray(S.budgets)) S = { budgets: [], tx: [], lastTopup: null };
-  S.budgets.forEach((b, i) => {          // ältere Daten ergänzen
+  if (!Array.isArray(S.history)) S.history = [];
+  if (typeof S.savings !== 'number') S.savings = 0;
+  S.budgets.forEach((b, i) => {
     if (!b.color) b.color = COLORS[i % COLORS.length];
     if (!b.emoji) b.emoji = EMOJIS[i % EMOJIS.length];
   });
@@ -236,10 +281,14 @@ function save() {
   try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { alert('Speichern fehlgeschlagen: ' + e.message); }
 }
 const budget = id => S.budgets.find(b => b.id === id);
+const sumMonthly = () => S.budgets.reduce((s, b) => s + b.monthly, 0);
+const sumBalance = () => S.budgets.reduce((s, b) => s + b.balance, 0);
 
+// type: 'expense' | 'topup' | 'save' (ins Sparschwein)
 function addTx(budgetId, amount, type) {
   const b = budget(budgetId);
   b.balance = round(b.balance + (type === 'topup' ? amount : -amount));
+  if (type === 'save') S.savings = round(S.savings + amount);
   const t = { id: uid(), budgetId, amount, type, ts: Date.now() };
   S.tx.push(t);
   return t;
@@ -249,84 +298,124 @@ function removeTx(txId) {
   if (i < 0) return;
   const t = S.tx[i], b = budget(t.budgetId);
   if (b) b.balance = round(b.balance + (t.type === 'topup' ? -t.amount : t.amount));
+  if (t.type === 'save') S.savings = round(S.savings - t.amount);
   S.tx.splice(i, 1);
 }
 function spentThisMonth(id) {
   const mk = monthKey();
-  return S.tx.filter(t => t.budgetId === id && t.type === 'expense' && monthKey(new Date(t.ts)) === mk)
+  return S.tx.filter(t => (!id || t.budgetId === id) && t.type === 'expense' && monthKey(new Date(t.ts)) === mk)
     .reduce((s, t) => s + t.amount, 0);
 }
 function topupAll() {
   S.budgets.forEach(b => { if (b.monthly > 0) addTx(b.id, b.monthly, 'topup'); });
   S.lastTopup = monthKey();
-  save(); render();
+}
+// Prognose: Rest am Monatsende, wenn im bisherigen Tempo weiter ausgegeben wird
+function forecast() {
+  const dim = daysInMonth(), elapsed = dim - daysLeft() + 1;
+  const pace = spentThisMonth() / elapsed;
+  return sumBalance() - pace * (daysLeft() - 1);
 }
 
-// ---------- Grafiken ----------
-function donutSVG(parts, center, sub) {
-  const r = 44, c = 2 * Math.PI * r, total = parts.reduce((s, p) => s + p.v, 0);
-  let off = 0, segs = '';
-  if (total > 0) parts.forEach(p => {
-    const len = p.v / total * c;
-    segs += `<circle cx="56" cy="56" r="${r}" fill="none" stroke="${p.color}" stroke-width="14"
-      stroke-dasharray="${Math.max(0, len - 2)} ${c}" stroke-dashoffset="${-off}" transform="rotate(-90 56 56)"/>`;
-    off += len;
+// ---------- Münzhaufen ----------
+// frac: 0..1 (Füllstand). Münzen werden pyramidenförmig verteilt.
+function pileSVG(frac, { stacks = 3, max = 15, w = 68, h = 62, r = 11, light = false } = {}) {
+  const n = Math.round(clamp(frac, 0, 1) * max);
+  const mid = (stacks - 1) / 2;
+  const weights = Array.from({ length: stacks }, (_, i) => 1 + 1.3 * (1 - Math.abs(i - mid) / (mid || 1)));
+  const wsum = weights.reduce((a, b) => a + b, 0);
+  const counts = Array(stacks).fill(0);
+  for (let k = 0; k < n; k++) {
+    let best = 0;
+    for (let i = 1; i < stacks; i++) if (counts[i] / weights[i] < counts[best] / weights[best]) best = i;
+    counts[best]++;
+  }
+  const ry = r * 0.38, gap = r * 1.7, base = h - ry - 3;
+  const maxCap = Math.ceil(max * Math.max(...weights) / wsum);
+  const step = clamp((base - ry - 2) / maxCap, r * 0.3, r * 0.62);
+  const x0 = w / 2 - mid * gap;
+  let s = `<ellipse cx="${w / 2}" cy="${base + ry}" rx="${mid * gap + r * 1.3}" ry="${ry * 1.1}" fill="${light ? 'rgba(0,0,0,.18)' : 'rgba(0,0,0,.10)'}"/>`;
+  if (n === 0) s += `<ellipse cx="${w / 2}" cy="${base}" rx="${r}" ry="${ry}" fill="none" stroke="${light ? 'rgba(255,255,255,.6)' : '#cbd5e1'}" stroke-width="1.5" stroke-dasharray="3 3"/>`;
+  const order = [...Array(stacks).keys()].sort((a, b) => Math.abs(b - mid) - Math.abs(a - mid));
+  order.forEach(i => {
+    const x = x0 + i * gap;
+    for (let k = 0; k < counts[i]; k++) {
+      const y = base - k * step;
+      s += `<rect x="${x - r}" y="${y}" width="${2 * r}" height="${step}" fill="#b45309"/>
+        <ellipse cx="${x}" cy="${y + step}" rx="${r}" ry="${ry}" fill="#b45309"/>
+        <ellipse cx="${x}" cy="${y}" rx="${r}" ry="${ry}" fill="url(#coin)" stroke="#92400e" stroke-width=".6"/>`;
+    }
+    if (counts[i]) s += `<ellipse cx="${x}" cy="${base - (counts[i] - 1) * step}" rx="${r * .55}" ry="${ry * .5}" fill="none" stroke="#fde68a" stroke-width=".9"/>`;
   });
-  return `<svg class="donut" viewBox="0 0 112 112" aria-hidden="true">
-    <circle cx="56" cy="56" r="${r}" fill="none" stroke="rgba(255,255,255,.22)" stroke-width="14"/>${segs}
-    <text x="56" y="54" text-anchor="middle" font-size="17" font-weight="800">${center}</text>
-    <text x="56" y="71" text-anchor="middle" font-size="10" opacity=".85">${sub}</text></svg>`;
-}
-function ringSVG(pct, color) {
-  const r = 24, c = 2 * Math.PI * r;
-  return `<svg viewBox="0 0 56 56" aria-hidden="true">
-    <circle cx="28" cy="28" r="${r}" fill="${tint(color, .14)}" stroke="${tint(color, .22)}" stroke-width="5"/>
-    <circle cx="28" cy="28" r="${r}" fill="none" stroke="${color}" stroke-width="5" stroke-linecap="round"
-      stroke-dasharray="${pct / 100 * c} ${c}" transform="rotate(-90 28 28)"/></svg>`;
+  if (frac > 1) s += `<text x="${w - 2}" y="${r + 2}" text-anchor="end" font-size="${r}" >✨</text>`;
+  return `<svg class="pilesvg" viewBox="0 0 ${w} ${h}" width="100%" aria-hidden="true">
+    <defs><linearGradient id="coin" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fde68a"/><stop offset=".5" stop-color="#fbbf24"/><stop offset="1" stop-color="#f59e0b"/></linearGradient></defs>${s}</svg>`;
 }
 
 // ---------- Hauptansicht ----------
 function render() {
   const list = $('list');
   if (!S.budgets.length) {
-    $('hero').innerHTML = ''; $('banner').innerHTML = '';
-    list.innerHTML = `<div class="empty"><div class="big-emo">💸</div>Noch keine Budgets.<br><button id="firstAdd">Erstes Budget anlegen</button></div>`;
+    $('hero').innerHTML = ''; $('banner').innerHTML = ''; $('motiv').innerHTML = '';
+    list.innerHTML = `<div class="empty"><div class="big-emo">💰</div>Noch keine Budgets.<br><button id="firstAdd">Erstes Budget anlegen</button></div>`;
     $('firstAdd').onclick = () => openEdit(null);
     $('fab').style.display = 'none';
     return;
   }
   $('fab').style.display = '';
-  const dl = daysLeft();
-  const total = S.budgets.reduce((s, b) => s + b.balance, 0);
-  const parts = S.budgets.filter(b => b.balance > 0).map(b => ({ v: b.balance, color: b.color }));
+  const dl = daysLeft(), total = sumBalance(), monthly = sumMonthly();
+
+  // Banner: neuer Monat → Bilanz
+  const needTopup = S.lastTopup !== monthKey();
+  $('banner').innerHTML = needTopup
+    ? `<div class="banner"><span>🏁 ${S.lastTopup ? monthNameOf(S.lastTopup) + ' ist vorbei!' : 'Neuer Monat!'}</span><button id="bTop">${S.lastTopup ? 'Bilanz ansehen' : 'Aufstocken'}</button></div>`
+    : '';
+  if (needTopup) $('bTop').onclick = openBilanz;
+
+  // Ziel: höchstes Medaillen-Ziel, das noch erreichbar ist
+  let goal = '';
+  if (!needTopup && monthly > 0) {
+    for (const m of MEDALS) {
+      const keep = Math.max(m.min * monthly, 0.01);
+      const allowed = (total - keep) / dl;
+      if (allowed > 0) { goal = `${m.e} ${m.n}-Ziel: max. ${eur.format(allowed)}/Tag`; break; }
+    }
+    if (!goal) goal = '⚠️ Budget aufgebraucht – jeder gesparte Euro zählt';
+  }
+  const fc = forecast(), fm = monthly > 0 ? medalFor(fc / monthly) : null;
   $('hero').innerHTML = `<div class="hero">
       <div style="flex:1;min-width:0">
         <div class="lbl">Noch verfügbar</div>
         <div class="tot num">${eur.format(total)}</div>
         <div class="day num">≈ ${eur.format(perDay(total))} / Tag</div>
-        <div class="left">noch ${dl} ${dl === 1 ? 'Tag' : 'Tage'} im ${monthName()}</div>
+        ${goal ? `<div class="goal num">${goal}</div>` : ''}
+        <div class="left num">noch ${dl} ${dl === 1 ? 'Tag' : 'Tage'} · Prognose: ${fc >= 0 ? eur0.format(fc) + ' übrig ' + (fm ? fm.e : '') : eur0.format(-fc) + ' drüber'}</div>
       </div>
-      ${donutSVG(parts, dl, dl === 1 ? 'Tag übrig' : 'Tage übrig')}
+      <div class="pile">${pileSVG(monthly > 0 ? total / monthly : 0, { stacks: 5, max: 32, w: 130, h: 110, r: 12, light: true })}</div>
     </div>`;
 
-  const needTopup = S.lastTopup !== monthKey();
-  $('banner').innerHTML = needTopup
-    ? `<div class="banner"><span>🗓️ Neuer Monat – Budgets für ${monthName()} aufstocken?</span><button id="bTop">Aufstocken</button></div>`
-    : '';
-  if (needTopup) $('bTop').onclick = topupAll;
+  // Sparschwein & Medaillen
+  const medals = S.history.slice(-8).map(h => (medalFor(h.left / (h.monthly || 1)) || { e: '▫️' }).e).join('');
+  $('motiv').innerHTML = (S.savings > 0 || S.history.length) ? `<div class="motiv">
+      <div><span class="pig">🐷</span><span><b class="num">${eur.format(S.savings)}</b><small>im Sparschwein</small></span></div>
+      <div><span style="min-width:0"><span class="medals">${medals || '–'}</span><small style="display:block">Monats-Medaillen</small></span></div>
+    </div>` : '';
 
   list.innerHTML = '';
+  const dim = daysInMonth();
   S.budgets.forEach(b => {
-    const pct = b.monthly > 0 ? Math.max(0, Math.min(100, b.balance / b.monthly * 100)) : (b.balance > 0 ? 100 : 0);
-    const low = b.balance < 0 || (b.monthly > 0 && pct < 15);
+    const frac = b.monthly > 0 ? b.balance / b.monthly : (b.balance > 0 ? 1 : 0);
+    const planned = b.monthly * dl / dim;          // so viel wäre bei gleichmäßigem Ausgeben noch da
+    const diff = b.balance - planned;
     const el = document.createElement('button');
     el.className = 'budget';
+    el.style.setProperty('--c', b.color);
     el.innerHTML = `
-      <div class="ring">${ringSVG(pct, b.color)}<div class="emo">${b.emoji}</div></div>
+      <div class="pile">${pileSVG(frac)}</div>
       <div class="mid">
-        <div class="name">${esc(b.name)}</div>
-        <div class="sub num">von ${eur.format(b.monthly)} / Monat</div>
-        <span class="pd num" style="background:${tint(low ? '#e11d48' : b.color, .14)};color:${low ? 'var(--neg)' : b.color}">≈ ${eur.format(perDay(b.balance))} / Tag</span>
+        <div class="name">${b.emoji} ${esc(b.name)}</div>
+        <div class="sub num">von ${eur0.format(b.monthly)} im Monat</div>
+        <div class="tags"><span class="tag num" style="background:${tint(b.color, .15)};color:${b.color}">≈ ${eur.format(perDay(b.balance))}/Tag</span>${b.monthly > 0 && !needTopup ? `<span class="tag ${diff >= 0 ? 'up' : 'down'} num">${diff >= 0 ? '▲ ' + eur0.format(diff) + ' vor Plan' : '▼ ' + eur0.format(-diff) + ' hinter Plan'}</span>` : ''}</div>
       </div>
       <div class="bal num ${b.balance < 0 ? 'neg' : ''}">${eur.format(b.balance)}</div>`;
     el.onclick = () => openDetail(b.id);
@@ -390,7 +479,7 @@ $('btnBook').onclick = () => {
 };
 $('fab').onclick = openExpense;
 
-// ---------- Toast ----------
+// ---------- Toast & Konfetti ----------
 let toastTimer;
 function toast(msg, undo) {
   $('toastMsg').textContent = msg;
@@ -400,29 +489,78 @@ function toast(msg, undo) {
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => $('toast').classList.remove('show'), 5000);
 }
+function confetti(n = 70) {
+  const cols = ['#f59e0b', '#fbbf24', '#ec4899', '#6366f1', '#10b981', '#06b6d4'];
+  for (let i = 0; i < n; i++) {
+    const c = document.createElement('div');
+    c.className = 'confetti';
+    c.style.left = Math.random() * 100 + 'vw';
+    c.style.background = cols[i % cols.length];
+    c.style.animationDuration = 1.8 + Math.random() * 1.6 + 's';
+    c.style.animationDelay = Math.random() * .5 + 's';
+    document.body.appendChild(c);
+    setTimeout(() => c.remove(), 4200);
+  }
+}
+
+// ---------- Monatsbilanz ----------
+function openBilanz() {
+  if (!S.lastTopup) { topupAll(); save(); render(); toast('✅ Budgets aufgestockt'); return; }
+  const prev = monthNameOf(S.lastTopup);
+  const monthly = sumMonthly(), left = round(sumBalance());
+  const positive = round(S.budgets.reduce((s, b) => s + Math.max(0, b.balance), 0));
+  const m = monthly > 0 ? medalFor(left / monthly) : null;
+  const msg = m ? { Gold: 'Hervorragend gespart!', Silber: 'Stark – fast Gold!', Bronze: 'Geschafft, im Plus geblieben!' }[m.n]
+    : left === 0 ? 'Punktlandung.' : 'Diesmal drüber – nächster Monat wird besser.';
+  $('bilBody').innerHTML = `
+    <div class="medal pop">${m ? m.e : '💪'}</div>
+    <h2 style="justify-content:center;margin:6px 0 2px">${prev}-Bilanz</h2>
+    <p>${msg}</p>
+    <div class="pile">${pileSVG(monthly > 0 ? left / monthly : 0, { stacks: 5, max: 32, w: 130, h: 64, r: 12 })}</div>
+    <div class="big num ${left < 0 ? 'neg' : ''}">${left >= 0 ? eur.format(left) + ' übrig' : eur.format(-left) + ' drüber'}</div>
+    <div class="scale num">🥇 ab ${eur0.format(monthly * .2)} · 🥈 ab ${eur0.format(monthly * .1)} · 🥉 im Plus</div>
+    <div style="text-align:left;margin-bottom:14px">${S.budgets.map(b =>
+      `<div class="bilrow"><span>${b.emoji} ${esc(b.name)}</span><b class="num ${b.balance < 0 ? 'neg' : ''}">${eur.format(b.balance)}</b></div>`).join('')}</div>
+    ${positive > 0 ? `<button class="primary gold" id="bilSave">🐷 ${eur.format(positive)} ins Sparschwein & aufstocken</button>
+      <button class="secondary" id="bilKeep">Rest im Budget lassen & aufstocken</button>`
+      : `<button class="primary blue" id="bilKeep">Für ${monthName()} aufstocken</button>`}`;
+  const finish = toPiggy => {
+    S.history.push({ m: S.lastTopup, left, monthly });
+    if (toPiggy) S.budgets.forEach(b => { if (b.balance > 0) addTx(b.id, b.balance, 'save'); });
+    topupAll(); save(); render(); closeSheet();
+    if (m) confetti(m.n === 'Gold' ? 110 : 60);
+    toast(toPiggy ? `🐷 Sparschwein: ${eur.format(S.savings)}` : `✅ Budgets für ${monthName()} aufgestockt`);
+  };
+  if ($('bilSave')) $('bilSave').onclick = () => finish(true);
+  $('bilKeep').onclick = () => finish(false);
+  show('sBilanz');
+  if (m) setTimeout(() => confetti(m.n === 'Gold' ? 90 : 40), 250);
+}
 
 // ---------- Detail ----------
 let detailId = null;
 function openDetail(id) {
   detailId = id;
   const b = budget(id);
-  $('dName').textContent = b.name;
+  $('dName').textContent = b.emoji + ' ' + b.name;
   $('dHead').style.background = `linear-gradient(135deg, ${b.color}, ${tint(b.color, .7)})`;
-  $('dHead').innerHTML = `<div class="e">${b.emoji}</div><div class="b num">${eur.format(b.balance)}</div>
+  $('dHead').innerHTML = `<div class="pile">${pileSVG(b.monthly > 0 ? b.balance / b.monthly : 0, { stacks: 5, max: 28, w: 130, h: 64, r: 11, light: true })}</div>
+    <div class="b num">${eur.format(b.balance)}</div>
     <div class="s num">≈ ${eur.format(perDay(b.balance))} pro Tag · noch ${daysLeft()} Tage</div>`;
   $('dStats').innerHTML = `
-    <div class="stat"><b class="num">${eur.format(b.monthly)}</b><small>pro Monat</small></div>
+    <div class="stat"><b class="num">${eur0.format(b.monthly)}</b><small>pro Monat</small></div>
     <div class="stat"><b class="num">${eur.format(spentThisMonth(id))}</b><small>ausgegeben im ${monthName()}</small></div>
-    <div class="stat"><b class="num">${eur.format(b.monthly / new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate())}</b><small>Ø Plan / Tag</small></div>`;
+    <div class="stat"><b class="num">${eur.format(b.monthly / daysInMonth())}</b><small>Plan / Tag</small></div>`;
   const tx = S.tx.filter(t => t.budgetId === id).sort((a, b) => b.ts - a.ts).slice(0, 100);
   const box = $('dTx'); box.innerHTML = '';
   if (!tx.length) box.innerHTML = '<div class="center-muted" style="padding:12px">Noch keine Buchungen</div>';
+  const label = { topup: 'Aufstockung · ', save: '🐷 ins Sparschwein · ', expense: '' };
   tx.forEach(t => {
     const d = new Date(t.ts);
     const el = document.createElement('div');
     el.className = 'tx';
-    el.innerHTML = `<div><div class="a num ${t.type === 'expense' ? 'neg' : 'plus'}">${t.type === 'expense' ? '−' : '+'} ${eur.format(t.amount)}</div>
-      <div class="d">${t.type === 'topup' ? 'Aufstockung · ' : ''}${d.toLocaleDateString('de-DE')} ${d.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' })}</div></div>
+    el.innerHTML = `<div><div class="a num ${t.type === 'expense' ? 'neg' : t.type === 'topup' ? 'plus' : ''}">${t.type === 'topup' ? '+' : '−'} ${eur.format(t.amount)}</div>
+      <div class="d">${label[t.type] || ''}${d.toLocaleDateString('de-DE')} ${d.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' })}</div></div>
       <button aria-label="Löschen">✕</button>`;
     el.querySelector('button').onclick = () => {
       if (!confirm('Diese Buchung löschen?')) return;
@@ -440,11 +578,12 @@ function openSettings() {
   S.budgets.forEach(b => {
     const el = document.createElement('button');
     el.className = 'setrow';
-    el.innerHTML = `<span><span style="margin-right:8px">${b.emoji}</span>${esc(b.name)}</span>
+    el.innerHTML = `<span>${b.emoji} ${esc(b.name)}</span>
       <span class="num" style="color:${b.color};font-weight:700">${eur.format(b.monthly)} / Monat ›</span>`;
     el.onclick = () => openEdit(b.id);
     box.appendChild(el);
   });
+  $('setSavings').textContent = eur.format(S.savings);
   show('sSettings');
 }
 $('btnSettings').onclick = openSettings;
@@ -452,7 +591,13 @@ $('btnAdd').onclick = () => openEdit(null);
 $('btnTopupAll').onclick = () => {
   if (!S.budgets.length) return;
   if (!confirm('Allen Budgets jetzt ihren Monatsbetrag gutschreiben?')) return;
-  topupAll(); closeSheet(); toast('✅ Budgets aufgestockt');
+  topupAll(); save(); render(); closeSheet(); toast('✅ Budgets aufgestockt');
+};
+$('btnSavingsOut').onclick = () => {
+  const a = parseAmt(prompt(`Wie viel entnehmen? (verfügbar: ${eur.format(S.savings)})`, ''));
+  if (!(a > 0)) return;
+  S.savings = round(Math.max(0, S.savings - a));
+  save(); render(); $('setSavings').textContent = eur.format(S.savings);
 };
 $('btnExport').onclick = () => {
   const blob = new Blob([JSON.stringify(S, null, 2)], { type: 'application/json' });
