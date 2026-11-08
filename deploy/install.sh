@@ -15,15 +15,30 @@ export DEBIAN_FRONTEND=noninteractive
 apt-get update -qq
 apt-get install -y -qq nginx git ca-certificates cron openssl >/dev/null
 
-echo "==> Repository holen: $GITHUB_REPO ($BRANCH)"
-if [ -d "$DIR/.git" ]; then
+SRC="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+if [ "$SRC" != "$DIR" ] && [ -f "$SRC/app/index.html" ] && [ ! -d "$SRC/.git" ] && [ ! -d "$DIR/.git" ]; then
+  echo "==> App aus lokaler Kopie übernehmen ($SRC)"
+  MODE=local
+  mkdir -p "$DIR"
+  rm -rf "$DIR/app" "$DIR/deploy"
+  cp -a "$SRC/app" "$SRC/deploy" "$DIR/"
+  [ -f "$SRC/README.md" ] && cp "$SRC/README.md" "$DIR/"
+elif [ -d "$DIR/.git" ]; then
+  echo "==> Repository aktualisieren"
+  MODE=git
   git -C "$DIR" pull --ff-only
+elif [ "$SRC" = "$DIR" ]; then
+  echo "==> Lokale Installation in $DIR wird neu eingerichtet"
+  MODE=local
 else
+  echo "==> Repository holen: $GITHUB_REPO ($BRANCH)"
+  MODE=git
+  rm -rf "$DIR"
   git clone --depth 1 -b "$BRANCH" "https://github.com/$GITHUB_REPO.git" "$DIR"
 fi
 
 echo "==> Datenverzeichnis und Sync-Token"
-mkdir -p "$DATA/api" "$DATA/backups" "$CONF"
+mkdir -p "$DATA/api" "$DATA/backups" "$CONF" /etc/nginx/conf.d /etc/nginx/sites-available /etc/nginx/sites-enabled /etc/cron.daily
 chown -R www-data:www-data "$DATA"
 chmod 750 "$DATA"
 if [ ! -s "$CONF/token" ]; then
@@ -58,10 +73,21 @@ chmod +x /etc/cron.daily/budget-backup
 systemctl enable --now cron >/dev/null 2>&1 || true
 
 echo "==> Update-Befehl anlegen: budget-update"
+if [ "$MODE" = git ]; then
 cat > /usr/local/bin/budget-update <<EOF
 #!/usr/bin/env bash
 exec bash $DIR/deploy/install.sh "$GITHUB_REPO"
 EOF
+else
+cat > /usr/local/bin/budget-update <<'EOF'
+#!/usr/bin/env bash
+# Lokale Installation: neues Archiv nach /root/budget-src entpacken, dann dieses Skript ausführen.
+set -e
+[ -f /root/budget-src/deploy/install.sh ] || { echo "Neue Version zuerst nach /root/budget-src entpacken."; exit 1; }
+rm -rf /opt/budget-app/app /opt/budget-app/deploy
+exec bash /root/budget-src/deploy/install.sh
+EOF
+fi
 chmod +x /usr/local/bin/budget-update
 
 IP=$(hostname -I | awk '{print $1}')
