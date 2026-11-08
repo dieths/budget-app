@@ -128,7 +128,7 @@ header h1{font-size:23px;margin:0;font-weight:750;letter-spacing:-.02em;flex:1}
 .secondary{width:100%;padding:13px;border-radius:15px;background:var(--card);font-weight:600;margin-top:8px;box-shadow:var(--shadow)}
 .danger{color:var(--neg)}
 label{display:block;font-size:13px;color:var(--muted);margin:14px 0 6px}
-input.field{width:100%;padding:12px 14px;font-size:17px;border-radius:13px;border:1px solid var(--line);
+input.field,select.field{width:100%;padding:12px 14px;font-size:17px;border-radius:13px;border:1px solid var(--line);
   background:var(--card);color:var(--text);outline:none}
 .swatches{display:flex;flex-wrap:wrap;gap:10px}
 .sw{width:34px;height:34px;border-radius:50%;border:3px solid transparent}
@@ -181,7 +181,7 @@ input.field{width:100%;padding:12px 14px;font-size:17px;border-radius:13px;borde
 <header>
   <h1>Super Easy Budget</h1>
   <span class="sync-ind" id="syncInd" hidden></span>
-  <button class="icon-btn" id="btnSettings" aria-label="Budgets verwalten">⚙︎</button>
+  <button class="icon-btn" id="btnSettings" data-i18n-aria="manage" aria-label="Budgets verwalten">⚙︎</button>
 </header>
 
 <div id="banner"></div>
@@ -189,36 +189,36 @@ input.field{width:100%;padding:12px 14px;font-size:17px;border-radius:13px;borde
 <div id="motiv"></div>
 <div class="list" id="list"></div>
 
-<button class="fab" id="fab" aria-label="Ausgabe erfassen">−</button>
-<div class="toast" id="toast"><span id="toastMsg"></span><button id="toastUndo">Rückgängig</button></div>
+<button class="fab" id="fab" data-i18n-aria="add_expense" aria-label="Ausgabe erfassen">−</button>
+<div class="toast" id="toast"><span id="toastMsg"></span><button id="toastUndo" data-i18n="undo">Rückgängig</button></div>
 <div class="overlay" id="overlay"></div>
 
 <!-- Ausgabe -->
 <div class="sheet" id="sExpense">
   <div class="grip"></div>
-  <h2>Ausgabe <button data-close>Abbrechen</button></h2>
+  <h2><span data-i18n="expense">Ausgabe</span> <button data-close data-i18n="cancel">Abbrechen</button></h2>
   <input class="amount num" id="amt" inputmode="decimal" placeholder="0,00 €" autocomplete="off">
-  <input class="field note-in" id="note" list="noteList" maxlength="80" autocomplete="off" enterkeyhint="done" placeholder="Wofür? (optional)">
+  <input class="field note-in" id="note" list="noteList" maxlength="80" autocomplete="off" enterkeyhint="done" data-i18n-ph="note_ph" placeholder="Wofür? (optional)">
   <datalist id="noteList"></datalist>
   <div class="chips" id="chips"></div>
-  <button class="primary" id="btnBook" disabled>Abbuchen</button>
+  <button class="primary" id="btnBook" disabled data-i18n="book">Abbuchen</button>
 </div>
 
 <!-- Budget-Detail -->
 <div class="sheet" id="sDetail">
   <div class="grip"></div>
-  <h2><span id="dName"></span> <button data-close>Fertig</button></h2>
+  <h2><span id="dName"></span> <button data-close data-i18n="done">Fertig</button></h2>
   <div class="dhead" id="dHead"></div>
   <div class="stats" id="dStats"></div>
-  <div class="section">Buchungen</div>
+  <div class="section" data-i18n="transactions">Buchungen</div>
   <div id="dTx"></div>
-  <button class="secondary" id="dEdit">Budget bearbeiten</button>
+  <button class="secondary" id="dEdit" data-i18n="edit_budget">Budget bearbeiten</button>
 </div>
 
 <!-- Monatsübersicht -->
 <div class="sheet" id="sMonth">
   <div class="grip"></div>
-  <h2><span class="mnav"><button id="mPrev" aria-label="Vorheriger Monat">‹</button><span id="mTitle"></span><button id="mNext" aria-label="Nächster Monat">›</button></span> <button data-close>Fertig</button></h2>
+  <h2><span class="mnav"><button id="mPrev" data-i18n-aria="prev_month" aria-label="Vorheriger Monat">‹</button><span id="mTitle"></span><button id="mNext" data-i18n-aria="next_month" aria-label="Nächster Monat">›</button></span> <button data-close data-i18n="done">Fertig</button></h2>
   <div class="msum num" id="mSum"></div>
   <div id="mList"></div>
 </div>
@@ -232,41 +232,43 @@ input.field{width:100%;padding:12px 14px;font-size:17px;border-radius:13px;borde
 <!-- Einstellungen -->
 <div class="sheet" id="sSettings">
   <div class="grip"></div>
-  <h2>Budgets verwalten <button data-close>Fertig</button></h2>
+  <h2><span data-i18n="manage">Budgets verwalten</span> <button data-close data-i18n="done">Fertig</button></h2>
   <div id="setList"></div>
-  <button class="secondary" id="btnAdd">+ Neues Budget</button>
-  <div class="section">Aufstocken</div>
-  <button class="secondary" id="btnTopupAll">Alle Budgets jetzt zusätzlich aufstocken</button>
-  <div class="section">Sparschwein</div>
-  <div class="setrow"><span>🐷 Gespart</span><b class="num" id="setSavings"></b></div>
-  <button class="secondary" id="btnSavingsOut">Betrag aus dem Sparschwein nehmen</button>
-  <div class="section">Synchronisierung</div>
+  <button class="secondary" id="btnAdd" data-i18n="add_budget">+ Neues Budget</button>
+  <div class="section" data-i18n="sec_topup">Aufstocken</div>
+  <button class="secondary" id="btnTopupAll" data-i18n="topup_all">Alle Budgets jetzt zusätzlich aufstocken</button>
+  <div class="section" data-i18n="sec_piggy">Sparschwein</div>
+  <div class="setrow"><span data-i18n="saved">🐷 Gespart</span><b class="num" id="setSavings"></b></div>
+  <button class="secondary" id="btnSavingsOut" data-i18n="piggy_out">Betrag aus dem Sparschwein nehmen</button>
+  <div class="section" data-i18n="sec_sync">Synchronisierung</div>
   <div id="syncBox"></div>
-  <div class="section">Sicherung</div>
-  <button class="secondary" id="btnExport">Daten exportieren</button>
-  <button class="secondary" id="btnImport">Daten importieren</button>
+  <div class="section" data-i18n="sec_backup">Sicherung</div>
+  <button class="secondary" id="btnExport" data-i18n="export">Daten exportieren</button>
+  <button class="secondary" id="btnImport" data-i18n="import">Daten importieren</button>
   <input type="file" id="fileImport" accept="application/json" hidden>
+  <div class="section" data-i18n="sec_lang">Sprache</div>
+  <select class="field" id="langSel"><option value="auto" data-i18n="lang_auto">Automatisch</option><option value="de">Deutsch</option><option value="en">English</option></select>
 </div>
 
 <!-- Budget bearbeiten -->
 <div class="sheet" id="sEdit">
   <div class="grip"></div>
-  <h2><span id="eTitle">Budget</span> <button data-close>Abbrechen</button></h2>
-  <label for="eName">Name</label>
-  <input class="field" id="eName" placeholder="z. B. Lebensmittel">
-  <label for="eMonthly">Monatlicher Betrag</label>
+  <h2><span id="eTitle">Budget</span> <button data-close data-i18n="cancel">Abbrechen</button></h2>
+  <label for="eName" data-i18n="name">Name</label>
+  <input class="field" id="eName" data-i18n-ph="name_ph" placeholder="z. B. Lebensmittel">
+  <label for="eMonthly" data-i18n="monthly_amount">Monatlicher Betrag</label>
   <input class="field num" id="eMonthly" inputmode="decimal" placeholder="0,00">
   <div id="eBalWrap">
-    <label for="eBal">Aktueller Stand (Korrektur)</label>
+    <label for="eBal" data-i18n="current_bal">Aktueller Stand (Korrektur)</label>
     <input class="field num" id="eBal" inputmode="decimal">
   </div>
-  <label>Farbe</label>
+  <label data-i18n="color">Farbe</label>
   <div class="swatches" id="eColors"></div>
-  <label>Symbol</label>
+  <label data-i18n="icon">Symbol</label>
   <div class="emojis" id="eEmojis"></div>
   <div style="height:18px"></div>
-  <button class="primary blue" id="eSave">Speichern</button>
-  <button class="secondary danger" id="eDelete">Budget löschen</button>
+  <button class="primary blue" id="eSave" data-i18n="save">Speichern</button>
+  <button class="secondary danger" id="eDelete" data-i18n="delete_budget">Budget löschen</button>
 </div>
 
 <script>
@@ -275,13 +277,117 @@ const KEY = 'budget-app-v1', SYNC_KEY = 'budget-sync';
 const COLORS = ['#6f78c4', '#c4789a', '#cf9a4c', '#4f9d7e', '#4e98ad', '#9180c0', '#c06d68', '#86a654', '#cc8352', '#5e93c9'];
 const OLD_COLORS = ['#6366f1', '#ec4899', '#f59e0b', '#10b981', '#06b6d4', '#8b5cf6', '#ef4444', '#84cc16', '#f97316', '#0ea5e9'];
 const EMOJIS = ['🛒', '🍽️', '☕', '⛽', '🚗', '🏠', '💡', '📱', '👕', '🎁', '🎉', '🎮', '📚', '🐾', '✈️', '💊'];
-const MEDALS = [{ min: 0.20, e: '🥇', n: 'Gold' }, { min: 0.10, e: '🥈', n: 'Silber' }, { min: 0.0001, e: '🥉', n: 'Bronze' }];
-const eur = new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' });
-const eur0 = new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 });
+const MEDALS = [{ min: 0.20, e: '🥇', n: 'gold' }, { min: 0.10, e: '🥈', n: 'silver' }, { min: 0.0001, e: '🥉', n: 'bronze' }];
+
+/* ===================== Sprache ===================== */
+const LANG_KEY = 'budget-lang';
+let LANG_PREF = 'auto';
+try { LANG_PREF = localStorage.getItem(LANG_KEY) || 'auto'; } catch { }
+const SYS_LANG = (navigator.language || 'de').toLowerCase();
+const LANG = LANG_PREF === 'de' || LANG_PREF === 'en' ? LANG_PREF : (SYS_LANG.startsWith('de') ? 'de' : 'en');
+const LOC = LANG === 'de' ? 'de-DE' : (SYS_LANG.startsWith('en') ? navigator.language : 'en-GB');
+const I18N = {
+  de: {
+    manage: 'Budgets verwalten', add_expense: 'Ausgabe erfassen', undo: 'Rückgängig', expense: 'Ausgabe', cancel: 'Abbrechen',
+    note_ph: 'Wofür? (optional)', book: 'Abbuchen', done: 'Fertig', transactions: 'Buchungen', edit_budget: 'Budget bearbeiten',
+    prev_month: 'Vorheriger Monat', next_month: 'Nächster Monat', add_budget: '+ Neues Budget', sec_topup: 'Aufstocken',
+    topup_all: 'Alle Budgets jetzt zusätzlich aufstocken', sec_piggy: 'Sparschwein', saved: '🐷 Gespart',
+    piggy_out: 'Betrag aus dem Sparschwein nehmen', sec_sync: 'Synchronisierung', sec_backup: 'Sicherung',
+    export: 'Daten exportieren', import: 'Daten importieren', sec_lang: 'Sprache', lang_auto: 'Automatisch (Gerät)',
+    name: 'Name', name_ph: 'z. B. Lebensmittel', monthly_amount: 'Monatlicher Betrag', current_bal: 'Aktueller Stand (Korrektur)',
+    color: 'Farbe', icon: 'Symbol', save: 'Speichern', delete_budget: 'Budget löschen',
+    save_failed: e => 'Speichern fehlgeschlagen: ' + e,
+    empty: 'Noch keine Budgets.', first_budget: 'Erstes Budget anlegen',
+    month_over: m => m + ' ist vorbei', new_month: 'Neuer Monat', see_review: 'Bilanz ansehen', topup: 'Aufstocken',
+    medal_gold: 'Gold', medal_silver: 'Silber', medal_bronze: 'Bronze',
+    goal: (e, n, a) => `${e} ${n}-Ziel: max. ${a}/Tag`, used_up: 'Budget aufgebraucht – jeder gesparte Euro zählt',
+    under_plan: a => `▲ ${a} unter Plan`, over_plan: a => `▼ ${a} über Plan`, on_plan: '● im Plan',
+    available: 'Noch verfügbar', expenses_link: 'Ausgaben ›', per_day: a => `≈ ${a} / Tag`, per_day_short: a => `≈ ${a}/Tag`,
+    days_left: d => `noch ${d} ${d === 1 ? 'Tag' : 'Tage'}`, forecast_left: (a, e) => `Prognose: ${a} übrig ${e}`, forecast_over: a => `Prognose: ${a} drüber`,
+    in_piggy: 'im Sparschwein', medals: 'Monats-Medaillen', of_month: a => `von ${a} im Monat`,
+    toast_booked: (e, a, d) => `${e} −${a} · noch ≈ ${d}/Tag`, topped_up: 'Budgets aufgestockt',
+    msg_gold: 'Hervorragend gespart!', msg_silver: 'Stark – fast Gold!', msg_bronze: 'Geschafft, im Plus geblieben!',
+    msg_zero: 'Punktlandung.', msg_over: 'Diesmal drüber – nächster Monat wird besser.',
+    backup_safe: '☁︎ Deine Daten sind auf deinem Server gesichert.', backup_dl: '💾 Sicherung herunterladen',
+    review_title: m => `${m}-Bilanz`, left_over: a => `${a} übrig`, overspent: a => `${a} drüber`,
+    scale: (g, s) => `🥇 ab ${g} · 🥈 ab ${s} · 🥉 im Plus`, to_piggy: a => `🐷 ${a} ins Sparschwein & aufstocken`,
+    keep_rest: 'Rest im Budget lassen & aufstocken', topup_for: m => `Für ${m} aufstocken`,
+    piggy_toast: a => `🐷 Sparschwein: ${a}`, topped_up_for: m => `Budgets für ${m} aufgestockt`,
+    per_day_left: (a, d) => `≈ ${a} pro Tag · noch ${d} Tage`, per_month: 'pro Monat', spent_in: m => `ausgegeben im ${m}`, plan_day: 'Plan / Tag',
+    no_tx: 'Noch keine Buchungen', lbl_topup: 'Aufstockung · ', lbl_save: '🐷 ins Sparschwein · ', lbl_adjust: 'Korrektur · ',
+    delete: 'Löschen', confirm_del_tx: 'Diese Buchung löschen?',
+    n_expenses: (n, a) => `${n} ${n === 1 ? 'Ausgabe' : 'Ausgaben'} · ${a}`, no_expenses: 'Keine Ausgaben in diesem Monat', no_note: 'ohne Notiz',
+    per_month_row: a => `${a} / Monat ›`, confirm_topup_all: 'Allen Budgets jetzt zusätzlich ihren Monatsbetrag gutschreiben?',
+    piggy_prompt: a => `Wie viel entnehmen? (verfügbar: ${a})`, export_file: 'budget-sicherung-',
+    invalid_file: 'Ungültige Datei', confirm_import: 'Aktuelle Daten durch die Sicherung ersetzen?', imported: 'Sicherung importiert',
+    import_failed: e => 'Import fehlgeschlagen: ' + e, edit_title: 'Budget bearbeiten', new_title: 'Neues Budget',
+    need_name: 'Bitte einen Namen eingeben.', need_amount: 'Bitte einen gültigen Monatsbetrag eingeben.',
+    confirm_del_budget: n => `Budget „${n}“ und alle Buchungen löschen?`, color_aria: 'Farbe',
+    sync_file_only: 'Nur verfügbar, wenn die App über deinen Server geöffnet wird.', token_ph: 'Sync-Token vom Server',
+    token_hint: 'Das Token zeigt das Installationsskript an (im CT: <code>cat /etc/budget-app/token</code>).', connect: 'Verbinden',
+    token_rejected: 'Token wurde nicht akzeptiert.', sync_active: '☁︎ Synchronisierung aktiv',
+    st_ok: 'Synchronisiert', st_busy: 'Wird synchronisiert …', st_offline: 'Server nicht erreichbar – wird später nachgeholt', st_auth: 'Token ungültig', st_on: 'Aktiv',
+    sync_now: 'Jetzt synchronisieren', sync_off: 'Synchronisierung trennen', confirm_sync_off: 'Synchronisierung auf diesem Gerät beenden? Die Daten bleiben erhalten.',
+  },
+  en: {
+    manage: 'Manage budgets', add_expense: 'Add expense', undo: 'Undo', expense: 'Expense', cancel: 'Cancel',
+    note_ph: 'What for? (optional)', book: 'Deduct', done: 'Done', transactions: 'Transactions', edit_budget: 'Edit budget',
+    prev_month: 'Previous month', next_month: 'Next month', add_budget: '+ New budget', sec_topup: 'Top up',
+    topup_all: 'Top up all budgets once more now', sec_piggy: 'Piggy bank', saved: '🐷 Saved',
+    piggy_out: 'Take money out of the piggy bank', sec_sync: 'Sync', sec_backup: 'Backup',
+    export: 'Export data', import: 'Import data', sec_lang: 'Language', lang_auto: 'Automatic (device)',
+    name: 'Name', name_ph: 'e.g. Groceries', monthly_amount: 'Monthly amount', current_bal: 'Current balance (correction)',
+    color: 'Colour', icon: 'Icon', save: 'Save', delete_budget: 'Delete budget',
+    save_failed: e => 'Saving failed: ' + e,
+    empty: 'No budgets yet.', first_budget: 'Create your first budget',
+    month_over: m => m + ' is over', new_month: 'New month', see_review: 'See review', topup: 'Top up',
+    medal_gold: 'Gold', medal_silver: 'Silver', medal_bronze: 'Bronze',
+    goal: (e, n, a) => `${e} ${n} goal: max. ${a}/day`, used_up: 'Budget used up – every euro saved counts',
+    under_plan: a => `▲ ${a} under plan`, over_plan: a => `▼ ${a} over plan`, on_plan: '● on plan',
+    available: 'Available', expenses_link: 'Expenses ›', per_day: a => `≈ ${a} / day`, per_day_short: a => `≈ ${a}/day`,
+    days_left: d => `${d} ${d === 1 ? 'day' : 'days'} left`, forecast_left: (a, e) => `Forecast: ${a} left ${e}`, forecast_over: a => `Forecast: ${a} over`,
+    in_piggy: 'in the piggy bank', medals: 'Monthly medals', of_month: a => `of ${a} per month`,
+    toast_booked: (e, a, d) => `${e} −${a} · ≈ ${d}/day left`, topped_up: 'Budgets topped up',
+    msg_gold: 'Excellent saving!', msg_silver: 'Great – almost gold!', msg_bronze: 'Made it, stayed in the plus!',
+    msg_zero: 'Spot on.', msg_over: 'Over this time – next month will be better.',
+    backup_safe: '☁︎ Your data is backed up on your server.', backup_dl: '💾 Download backup',
+    review_title: m => `${m} review`, left_over: a => `${a} left`, overspent: a => `${a} over`,
+    scale: (g, s) => `🥇 from ${g} · 🥈 from ${s} · 🥉 in the plus`, to_piggy: a => `🐷 ${a} to piggy bank & top up`,
+    keep_rest: 'Keep the rest & top up', topup_for: m => `Top up for ${m}`,
+    piggy_toast: a => `🐷 Piggy bank: ${a}`, topped_up_for: m => `Budgets topped up for ${m}`,
+    per_day_left: (a, d) => `≈ ${a} per day · ${d} days left`, per_month: 'per month', spent_in: m => `spent in ${m}`, plan_day: 'Plan / day',
+    no_tx: 'No transactions yet', lbl_topup: 'Top-up · ', lbl_save: '🐷 to piggy bank · ', lbl_adjust: 'Correction · ',
+    delete: 'Delete', confirm_del_tx: 'Delete this transaction?',
+    n_expenses: (n, a) => `${n} ${n === 1 ? 'expense' : 'expenses'} · ${a}`, no_expenses: 'No expenses this month', no_note: 'no note',
+    per_month_row: a => `${a} / month ›`, confirm_topup_all: 'Add the monthly amount to every budget once more now?',
+    piggy_prompt: a => `How much to take out? (available: ${a})`, export_file: 'budget-backup-',
+    invalid_file: 'Invalid file', confirm_import: 'Replace current data with the backup?', imported: 'Backup imported',
+    import_failed: e => 'Import failed: ' + e, edit_title: 'Edit budget', new_title: 'New budget',
+    need_name: 'Please enter a name.', need_amount: 'Please enter a valid monthly amount.',
+    confirm_del_budget: n => `Delete budget “${n}” and all its transactions?`, color_aria: 'Colour',
+    sync_file_only: 'Only available when the app is opened from your server.', token_ph: 'Sync token from the server',
+    token_hint: 'The install script shows the token (in the container: <code>cat /etc/budget-app/token</code>).', connect: 'Connect',
+    token_rejected: 'Token was not accepted.', sync_active: '☁︎ Sync active',
+    st_ok: 'Synced', st_busy: 'Syncing …', st_offline: 'Server unreachable – will retry later', st_auth: 'Invalid token', st_on: 'Active',
+    sync_now: 'Sync now', sync_off: 'Disconnect sync', confirm_sync_off: 'Stop syncing on this device? Your data stays here.',
+  }
+};
+const tr = (k, ...a) => { const v = (I18N[LANG] || I18N.de)[k] ?? I18N.de[k] ?? k; return typeof v === 'function' ? v(...a) : v; };
+function applyI18n() {
+  document.documentElement.lang = LANG;
+  document.querySelectorAll('[data-i18n]').forEach(el => el.textContent = tr(el.dataset.i18n));
+  document.querySelectorAll('[data-i18n-ph]').forEach(el => el.placeholder = tr(el.dataset.i18nPh));
+  document.querySelectorAll('[data-i18n-aria]').forEach(el => el.setAttribute('aria-label', tr(el.dataset.i18nAria)));
+  $('amt').placeholder = eur.format(0);
+  $('eMonthly').placeholder = fmtInput(0);
+}
+
+const eur = new Intl.NumberFormat(LOC, { style: 'currency', currency: 'EUR' });
+const eur0 = new Intl.NumberFormat(LOC, { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 });
 const $ = id => document.getElementById(id);
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const monthKey = (d = new Date()) => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
-const monthName = (d = new Date()) => d.toLocaleDateString('de-DE', { month: 'long' });
+const monthName = (d = new Date()) => d.toLocaleDateString(LOC, { month: 'long' });
 const monthNameOf = mk => { const [y, m] = mk.split('-').map(Number); return monthName(new Date(y, m - 1, 1)); };
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
 const round = n => Math.round(n * 100) / 100;
@@ -292,7 +398,7 @@ const parseAmt = s => {
   const n = parseFloat(s);
   return isFinite(n) ? round(n) : NaN;
 };
-const fmtInput = n => n.toFixed(2).replace('.', ',');
+const fmtInput = n => LANG === 'de' ? n.toFixed(2).replace('.', ',') : n.toFixed(2);
 const tint = (hex, a) => hex + Math.round(a * 255).toString(16).padStart(2, '0');
 
 const daysInMonth = (d = new Date()) => new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate();
@@ -377,7 +483,7 @@ function load() {
   calc();
 }
 function persist() {
-  try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { alert('Speichern fehlgeschlagen: ' + e.message); }
+  try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { alert(tr('save_failed', e.message)); }
 }
 function save() { S.updated = Date.now(); persist(); calc(); scheduleSync(); }
 
@@ -473,7 +579,7 @@ function render() {
   const list = $('list');
   if (!S.budgets.length) {
     $('hero').innerHTML = ''; $('banner').innerHTML = ''; $('motiv').innerHTML = '';
-    list.innerHTML = `<div class="empty"><div class="big-emo">💰</div>Noch keine Budgets.<br><button id="firstAdd">Erstes Budget anlegen</button></div>`;
+    list.innerHTML = `<div class="empty"><div class="big-emo">💰</div>${tr('empty')}<br><button id="firstAdd">${tr('first_budget')}</button></div>`;
     $('firstAdd').onclick = () => openEdit(null);
     $('fab').style.display = 'none';
     return;
@@ -483,7 +589,7 @@ function render() {
 
   const needTopup = S.lastTopup !== monthKey();
   $('banner').innerHTML = needTopup
-    ? `<div class="banner"><span>🏁 ${S.lastTopup ? monthNameOf(S.lastTopup) + ' ist vorbei' : 'Neuer Monat'}</span><button id="bTop">${S.lastTopup ? 'Bilanz ansehen' : 'Aufstocken'}</button></div>`
+    ? `<div class="banner"><span>🏁 ${S.lastTopup ? tr('month_over', monthNameOf(S.lastTopup)) : tr('new_month')}</span><button id="bTop">${S.lastTopup ? tr('see_review') : tr('topup')}</button></div>`
     : '';
   if (needTopup) $('bTop').onclick = openBilanz;
 
@@ -491,31 +597,31 @@ function render() {
   if (!needTopup && monthly > 0) {
     for (const m of MEDALS) {
       const allowed = (total - Math.max(m.min * monthly, 0.01)) / dl;
-      if (allowed > 0) { goal = `${m.e} ${m.n}-Ziel: max. ${eur.format(allowed)}/Tag`; break; }
+      if (allowed > 0) { goal = tr('goal', m.e, tr('medal_' + m.n), eur.format(allowed)); break; }
     }
-    if (!goal) goal = 'Budget aufgebraucht – jeder gesparte Euro zählt';
+    if (!goal) goal = tr('used_up');
   }
   const pd = S.budgets.reduce((s, b) => s + planDiff(b), 0), tol = Math.max(1, monthly * 0.03);
   const st = needTopup || monthly <= 0 ? { c: '', t: '' }
-    : pd > tol ? { c: 'ahead', t: `▲ ${eur0.format(pd)} unter Plan` }
-    : pd < -tol ? { c: 'behind', t: `▼ ${eur0.format(-pd)} über Plan` }
-    : { c: '', t: '● im Plan' };
+    : pd > tol ? { c: 'ahead', t: tr('under_plan', eur0.format(pd)) }
+    : pd < -tol ? { c: 'behind', t: tr('over_plan', eur0.format(-pd)) }
+    : { c: '', t: tr('on_plan') };
   const fc = forecast(), fm = monthly > 0 ? medalFor(fc / monthly) : null;
   $('hero').innerHTML = `<div class="hero ${st.c}">
       <div style="flex:1;min-width:0">
-        <div class="lbl">Noch verfügbar ${st.t ? `<span class="status soft num">${st.t}</span>` : ''}<span style="margin-left:auto;font-weight:600">Ausgaben ›</span></div>
+        <div class="lbl">${tr('available')} ${st.t ? `<span class="status soft num">${st.t}</span>` : ''}<span style="margin-left:auto;font-weight:600">${tr('expenses_link')}</span></div>
         <div class="tot num">${eur.format(total)}</div>
-        <div class="day soft num">≈ ${eur.format(perDay(total))} / Tag</div>
+        <div class="day soft num">${tr('per_day', eur.format(perDay(total)))}</div>
         ${goal ? `<div class="goal num">${goal}</div>` : ''}
-        <div class="left num">noch ${dl} ${dl === 1 ? 'Tag' : 'Tage'} · Prognose: ${fc >= 0 ? eur0.format(fc) + ' übrig ' + (fm ? fm.e : '') : eur0.format(-fc) + ' drüber'}</div>
+        <div class="left num">${tr('days_left', dl)} · ${fc >= 0 ? tr('forecast_left', eur0.format(fc), fm ? fm.e : '') : tr('forecast_over', eur0.format(-fc))}</div>
       </div>
       <div class="pile">${pileSVG(monthly > 0 ? total / monthly : 0, { stacks: 5, max: 24, w: 96, h: 62, r: 8.5 })}</div>
     </div>`;
 
   const medals = S.history.slice(-8).map(h => (medalFor(h.left / (h.monthly || 1)) || { e: '▫️' }).e).join('');
   $('motiv').innerHTML = (SAVINGS > 0 || S.history.length) ? `<div class="motiv">
-      <div><span class="pig">🐷</span><span><b class="num">${eur.format(SAVINGS)}</b><small>im Sparschwein</small></span></div>
-      <div><span style="min-width:0"><span class="medals">${medals || '–'}</span><small style="display:block">Monats-Medaillen</small></span></div>
+      <div><span class="pig">🐷</span><span><b class="num">${eur.format(SAVINGS)}</b><small>${tr('in_piggy')}</small></span></div>
+      <div><span style="min-width:0"><span class="medals">${medals || '–'}</span><small style="display:block">${tr('medals')}</small></span></div>
     </div>` : '';
 
   list.innerHTML = '';
@@ -524,9 +630,9 @@ function render() {
     const frac = b.monthly > 0 ? v / b.monthly : (v > 0 ? 1 : 0);
     const diff = planDiff(b), btol = Math.max(0.5, b.monthly * 0.03);
     const planTag = !b.monthly || needTopup ? ''
-      : diff > btol ? `<span class="tag up num">▲ ${eur0.format(diff)} unter Plan</span>`
-      : diff < -btol ? `<span class="tag down num">▼ ${eur0.format(-diff)} über Plan</span>`
-      : `<span class="tag soft num" style="color:var(--muted)">● im Plan</span>`;
+      : diff > btol ? `<span class="tag up num">${tr('under_plan', eur0.format(diff))}</span>`
+      : diff < -btol ? `<span class="tag down num">${tr('over_plan', eur0.format(-diff))}</span>`
+      : `<span class="tag soft num" style="color:var(--muted)">${tr('on_plan')}</span>`;
     const el = document.createElement('button');
     el.className = 'budget';
     el.style.setProperty('--c', b.color);
@@ -534,8 +640,8 @@ function render() {
       <div class="pile">${pileSVG(frac)}</div>
       <div class="mid">
         <div class="name">${b.emoji} ${esc(b.name)}</div>
-        <div class="sub num">von ${eur0.format(b.monthly)} im Monat</div>
-        <div class="tags"><span class="tag num" style="background:${tint(b.color, .12)};color:${b.color}">≈ ${eur.format(perDay(v))}/Tag</span>${planTag}</div>
+        <div class="sub num">${tr('of_month', eur0.format(b.monthly))}</div>
+        <div class="tags"><span class="tag num" style="background:${tint(b.color, .12)};color:${b.color}">${tr('per_day_short', eur.format(perDay(v)))}</span>${planTag}</div>
       </div>
       <div class="bal num ${v < 0 ? 'neg' : ''}">${eur.format(v)}</div>`;
     el.onclick = () => openDetail(b.id);
@@ -602,7 +708,7 @@ $('btnBook').onclick = () => {
   const note = $('note').value.trim().slice(0, 80);
   const t = addTx(selBudget, a, 'expense', note ? { note } : null);
   save(); render(); closeSheet();
-  toast(`${b.emoji} −${eur.format(a)} · noch ≈ ${eur.format(perDay(bal(b.id)))}/Tag`, () => { removeTx(t.id); save(); render(); });
+  toast(tr('toast_booked', b.emoji, eur.format(a), eur.format(perDay(bal(b.id)))), () => { removeTx(t.id); save(); render(); });
 };
 $('fab').onclick = openExpense;
 
@@ -632,28 +738,27 @@ function confetti(n = 40) {
 
 /* ===================== Monatsbilanz ===================== */
 function openBilanz() {
-  if (!S.lastTopup) { topupMonth(); save(); render(); toast('Budgets aufgestockt'); return; }
+  if (!S.lastTopup) { topupMonth(); save(); render(); toast(tr('topped_up')); return; }
   const prevMk = S.lastTopup, prev = monthNameOf(prevMk);
   const monthly = sumMonthly(), left = round(sumBalance());
   const positive = round(S.budgets.reduce((s, b) => s + Math.max(0, bal(b.id)), 0));
   const m = monthly > 0 ? medalFor(left / monthly) : null;
-  const msg = m ? { Gold: 'Hervorragend gespart!', Silber: 'Stark – fast Gold!', Bronze: 'Geschafft, im Plus geblieben!' }[m.n]
-    : left === 0 ? 'Punktlandung.' : 'Diesmal drüber – nächster Monat wird besser.';
+  const msg = m ? tr('msg_' + m.n) : left === 0 ? tr('msg_zero') : tr('msg_over');
   const backup = syncCfg.on && syncState === 'ok'
-    ? `<div class="safe">☁︎ Deine Daten sind auf deinem Server gesichert.</div>`
-    : `<button class="secondary" id="bilBackup">💾 Sicherung herunterladen</button>`;
+    ? `<div class="safe">${tr('backup_safe')}</div>`
+    : `<button class="secondary" id="bilBackup">${tr('backup_dl')}</button>`;
   $('bilBody').innerHTML = `
     <div class="medal pop">${m ? m.e : '💪'}</div>
-    <h2 style="justify-content:center;margin:6px 0 2px">${prev}-Bilanz</h2>
+    <h2 style="justify-content:center;margin:6px 0 2px">${tr('review_title', prev)}</h2>
     <p>${msg}</p>
     <div class="pile">${pileSVG(monthly > 0 ? left / monthly : 0, { stacks: 5, max: 26, w: 110, h: 60, r: 9 })}</div>
-    <div class="big num ${left < 0 ? 'neg' : ''}">${left >= 0 ? eur.format(left) + ' übrig' : eur.format(-left) + ' drüber'}</div>
-    <div class="scale num">🥇 ab ${eur0.format(monthly * .2)} · 🥈 ab ${eur0.format(monthly * .1)} · 🥉 im Plus</div>
+    <div class="big num ${left < 0 ? 'neg' : ''}">${left >= 0 ? tr('left_over', eur.format(left)) : tr('overspent', eur.format(-left))}</div>
+    <div class="scale num">${tr('scale', eur0.format(monthly * .2), eur0.format(monthly * .1))}</div>
     <div style="text-align:left;margin-bottom:14px">${S.budgets.map(b =>
       `<div class="bilrow"><span>${b.emoji} ${esc(b.name)}</span><b class="num ${bal(b.id) < 0 ? 'neg' : ''}">${eur.format(bal(b.id))}</b></div>`).join('')}</div>
-    ${positive > 0 ? `<button class="primary gold" id="bilSave">🐷 ${eur.format(positive)} ins Sparschwein & aufstocken</button>
-      <button class="secondary" id="bilKeep">Rest im Budget lassen & aufstocken</button>`
-      : `<button class="primary blue" id="bilKeep">Für ${monthName()} aufstocken</button>`}
+    ${positive > 0 ? `<button class="primary gold" id="bilSave">${tr('to_piggy', eur.format(positive))}</button>
+      <button class="secondary" id="bilKeep">${tr('keep_rest')}</button>`
+      : `<button class="primary blue" id="bilKeep">${tr('topup_for', monthName())}</button>`}
     ${backup}`;
   const finish = toPiggy => {
     if (!S.history.some(h => h.m === prevMk)) S.history.push({ m: prevMk, left, monthly });
@@ -662,14 +767,14 @@ function openBilanz() {
       if (v > 0 && !S.tx.some(t => t.type === 'save' && t.m === prevMk && t.budgetId === b.id)) addTx(b.id, v, 'save', { m: prevMk });
     });
     topupMonth(); save(); render(); closeSheet();
-    if (m) confetti(m.n === 'Gold' ? 60 : 30);
-    toast(toPiggy ? `🐷 Sparschwein: ${eur.format(SAVINGS)}` : `Budgets für ${monthName()} aufgestockt`);
+    if (m) confetti(m.n === 'gold' ? 60 : 30);
+    toast(toPiggy ? tr('piggy_toast', eur.format(SAVINGS)) : tr('topped_up_for', monthName()));
   };
   if ($('bilSave')) $('bilSave').onclick = () => finish(true);
   $('bilKeep').onclick = () => finish(false);
   if ($('bilBackup')) $('bilBackup').onclick = exportData;
   show('sBilanz');
-  if (m) setTimeout(() => confetti(m.n === 'Gold' ? 50 : 25), 250);
+  if (m) setTimeout(() => confetti(m.n === 'gold' ? 50 : 25), 250);
 }
 
 /* ===================== Detail ===================== */
@@ -681,24 +786,24 @@ function openDetail(id) {
   $('dHead').style.background = tint(b.color, .13);
   $('dHead').innerHTML = `<div class="pile" style="color:${b.color}">${pileSVG(b.monthly > 0 ? v / b.monthly : 0, { stacks: 5, max: 24, w: 96, h: 56, r: 8.5 })}</div>
     <div class="b num ${v < 0 ? 'neg' : ''}">${eur.format(v)}</div>
-    <div class="s num">≈ ${eur.format(perDay(v))} pro Tag · noch ${daysLeft()} Tage</div>`;
+    <div class="s num">${tr('per_day_left', eur.format(perDay(v)), daysLeft())}</div>`;
   $('dStats').innerHTML = `
-    <div class="stat"><b class="num">${eur0.format(b.monthly)}</b><small>pro Monat</small></div>
-    <div class="stat"><b class="num">${eur.format(spentThisMonth(id))}</b><small>ausgegeben im ${monthName()}</small></div>
-    <div class="stat"><b class="num">${eur.format(b.monthly / daysInMonth())}</b><small>Plan / Tag</small></div>`;
+    <div class="stat"><b class="num">${eur0.format(b.monthly)}</b><small>${tr('per_month')}</small></div>
+    <div class="stat"><b class="num">${eur.format(spentThisMonth(id))}</b><small>${tr('spent_in', monthName())}</small></div>
+    <div class="stat"><b class="num">${eur.format(b.monthly / daysInMonth())}</b><small>${tr('plan_day')}</small></div>`;
   const tx = S.tx.filter(t => t.budgetId === id && t.ts > 0).sort((a, b) => b.ts - a.ts).slice(0, 100);
   const box = $('dTx'); box.innerHTML = '';
-  if (!tx.length) box.innerHTML = '<div class="center-muted" style="padding:12px">Noch keine Buchungen</div>';
-  const label = { topup: 'Aufstockung · ', save: '🐷 ins Sparschwein · ', adjust: 'Korrektur · ', expense: '' };
+  if (!tx.length) box.innerHTML = `<div class="center-muted" style="padding:12px">${tr('no_tx')}</div>`;
+  const label = { topup: tr('lbl_topup'), save: tr('lbl_save'), adjust: tr('lbl_adjust'), expense: '' };
   tx.forEach(t => {
     const d = new Date(t.ts), plus = t.type === 'topup' || (t.type === 'adjust' && t.amount > 0);
     const el = document.createElement('div');
     el.className = 'tx';
     el.innerHTML = `<div style="min-width:0"><div class="n"><span class="a num ${t.type === 'expense' ? 'neg' : plus ? 'plus' : ''}">${plus ? '+' : '−'} ${eur.format(Math.abs(t.amount))}</span>${t.note ? esc(t.note) : ''}</div>
-      <div class="d">${label[t.type] || ''}${d.toLocaleDateString('de-DE')} ${d.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' })}</div></div>
-      <button aria-label="Löschen">✕</button>`;
+      <div class="d">${label[t.type] || ''}${d.toLocaleDateString(LOC)} ${d.toLocaleTimeString(LOC, { hour: '2-digit', minute: '2-digit' })}</div></div>
+      <button aria-label="${tr('delete')}">✕</button>`;
     el.querySelector('button').onclick = () => {
-      if (!confirm('Diese Buchung löschen?')) return;
+      if (!confirm(tr('confirm_del_tx'))) return;
       removeTx(t.id); save(); render(); openDetail(id);
     };
     box.appendChild(el);
@@ -713,14 +818,14 @@ function openMonth(mk) {
   monthView = mk || monthKey();
   const [y, m] = monthView.split('-').map(Number);
   const first = S.tx.filter(t => t.type === 'expense' && t.ts > 0).reduce((a, t) => Math.min(a, t.ts), Date.now());
-  $('mTitle').textContent = new Date(y, m - 1, 1).toLocaleDateString('de-DE', { month: 'long', year: 'numeric' });
+  $('mTitle').textContent = new Date(y, m - 1, 1).toLocaleDateString(LOC, { month: 'long', year: 'numeric' });
   $('mPrev').disabled = monthView <= monthKey(new Date(first));
   $('mNext').disabled = monthView >= monthKey();
   const tx = S.tx.filter(t => t.type === 'expense' && t.ts > 0 && monthKey(new Date(t.ts)) === monthView).sort((a, b) => b.ts - a.ts);
   const sum = tx.reduce((s, t) => s + t.amount, 0);
-  $('mSum').textContent = tx.length ? `${tx.length} ${tx.length === 1 ? "Ausgabe" : "Ausgaben"} · ${eur.format(sum)}` : '';
+  $('mSum').textContent = tx.length ? tr('n_expenses', tx.length, eur.format(sum)) : '';
   const box = $('mList'); box.innerHTML = '';
-  if (!tx.length) box.innerHTML = '<div class="center-muted" style="padding:20px">Keine Ausgaben in diesem Monat</div>';
+  if (!tx.length) box.innerHTML = `<div class="center-muted" style="padding:20px">${tr('no_expenses')}</div>`;
   let day = '';
   tx.forEach(t => {
     const d = new Date(t.ts), dk = d.toDateString();
@@ -728,14 +833,14 @@ function openMonth(mk) {
       day = dk;
       const dayTx = tx.filter(x => new Date(x.ts).toDateString() === dk);
       const h = document.createElement('div'); h.className = 'dayh num';
-      h.textContent = d.toLocaleDateString('de-DE', { weekday: 'short', day: '2-digit', month: '2-digit' }) + ' · ' + eur.format(dayTx.reduce((s, x) => s + x.amount, 0));
+      h.textContent = d.toLocaleDateString(LOC, { weekday: 'short', day: '2-digit', month: '2-digit' }) + ' · ' + eur.format(dayTx.reduce((s, x) => s + x.amount, 0));
       box.appendChild(h);
     }
     const b = budget(t.budgetId);
     const el = document.createElement('div');
     el.className = 'tx';
-    el.innerHTML = `<div style="min-width:0"><div class="n">${t.note ? esc(t.note) : `<span style="color:var(--muted)">ohne Notiz</span>`}</div>
-      <div class="d">${b ? b.emoji + ' ' + esc(b.name) + ' · ' : ''}${d.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' })}</div></div>
+    el.innerHTML = `<div style="min-width:0"><div class="n">${t.note ? esc(t.note) : `<span style="color:var(--muted)">${tr('no_note')}</span>`}</div>
+      <div class="d">${b ? b.emoji + ' ' + esc(b.name) + ' · ' : ''}${d.toLocaleTimeString(LOC, { hour: '2-digit', minute: '2-digit' })}</div></div>
       <span class="a num neg" style="white-space:nowrap">− ${eur.format(t.amount)}</span>`;
     box.appendChild(el);
   });
@@ -753,7 +858,7 @@ function openSettings() {
     const el = document.createElement('button');
     el.className = 'setrow';
     el.innerHTML = `<span>${b.emoji} ${esc(b.name)}</span>
-      <span class="num" style="color:${b.color};font-weight:650">${eur.format(b.monthly)} / Monat ›</span>`;
+      <span class="num" style="color:${b.color};font-weight:650">${tr('per_month_row', eur.format(b.monthly))}</span>`;
     el.onclick = () => openEdit(b.id);
     box.appendChild(el);
   });
@@ -765,12 +870,12 @@ $('btnSettings').onclick = openSettings;
 $('btnAdd').onclick = () => openEdit(null);
 $('btnTopupAll').onclick = () => {
   if (!S.budgets.length) return;
-  if (!confirm('Allen Budgets jetzt zusätzlich ihren Monatsbetrag gutschreiben?')) return;
+  if (!confirm(tr('confirm_topup_all'))) return;
   S.budgets.forEach(b => { if (b.monthly > 0) addTx(b.id, b.monthly, 'topup'); });
-  save(); render(); closeSheet(); toast('Budgets aufgestockt');
+  save(); render(); closeSheet(); toast(tr('topped_up'));
 };
 $('btnSavingsOut').onclick = () => {
-  const a = parseAmt(prompt(`Wie viel entnehmen? (verfügbar: ${eur.format(SAVINGS)})`, ''));
+  const a = parseAmt(prompt(tr('piggy_prompt', eur.format(SAVINGS)), ''));
   if (!(a > 0)) return;
   addTx(null, Math.min(a, Math.max(0, SAVINGS)), 'withdraw');
   save(); render(); $('setSavings').textContent = eur.format(SAVINGS);
@@ -779,7 +884,7 @@ function exportData() {
   const blob = new Blob([JSON.stringify(S, null, 2)], { type: 'application/json' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = 'budget-sicherung-' + new Date().toISOString().slice(0, 10) + '.json';
+  a.download = tr('export_file') + new Date().toISOString().slice(0, 10) + '.json';
   a.click();
   setTimeout(() => URL.revokeObjectURL(a.href), 1000);
 }
@@ -789,16 +894,16 @@ $('fileImport').onchange = async e => {
   const f = e.target.files[0]; if (!f) return;
   try {
     const d = JSON.parse(await f.text());
-    if (!Array.isArray(d.budgets) || !Array.isArray(d.tx)) throw new Error('Ungültige Datei');
-    if (!confirm('Aktuelle Daten durch die Sicherung ersetzen?')) return;
+    if (!Array.isArray(d.budgets) || !Array.isArray(d.tx)) throw new Error(tr('invalid_file'));
+    if (!confirm(tr('confirm_import'))) return;
     const old = S;
     S = migrate(d);
     // Damit der Server die Sicherung übernimmt: alte Einträge als gelöscht markieren
     const keep = new Set([...S.tx.map(t => t.id), ...S.budgets.map(b => b.id)]);
     S.deleted = [...new Set([...S.deleted, ...old.tx.map(t => t.id), ...old.budgets.map(b => b.id)].filter(id => !keep.has(id)))];
     S.budgets.forEach(b => b.u = Date.now());
-    save(); render(); closeSheet(); toast('Sicherung importiert');
-  } catch (err) { alert('Import fehlgeschlagen: ' + err.message); }
+    save(); render(); closeSheet(); toast(tr('imported'));
+  } catch (err) { alert(tr('import_failed', err.message)); }
   e.target.value = '';
 };
 
@@ -806,7 +911,7 @@ $('fileImport').onchange = async e => {
 let editId = null, eColor, eEmoji;
 function renderPickers() {
   $('eColors').innerHTML = COLORS.map(c =>
-    `<button class="sw ${c === eColor ? 'sel' : ''}" style="background:${c}" data-c="${c}" aria-label="Farbe"></button>`).join('');
+    `<button class="sw ${c === eColor ? 'sel' : ''}" style="background:${c}" data-c="${c}" aria-label="${tr('color_aria')}"></button>`).join('');
   $('eEmojis').innerHTML = EMOJIS.map(e =>
     `<button class="em ${e === eEmoji ? 'sel' : ''}" data-e="${e}">${e}</button>`).join('');
   $('eColors').querySelectorAll('button').forEach(b => b.onclick = () => { eColor = b.dataset.c; renderPickers(); });
@@ -816,7 +921,7 @@ function openEdit(id) {
   editId = id;
   const b = id ? budget(id) : null;
   const n = S.budgets.length;
-  $('eTitle').textContent = b ? 'Budget bearbeiten' : 'Neues Budget';
+  $('eTitle').textContent = b ? tr('edit_title') : tr('new_title');
   $('eName').value = b ? b.name : '';
   $('eMonthly').value = b ? fmtInput(b.monthly) : '';
   $('eBal').value = b ? fmtInput(bal(b.id)) : '';
@@ -831,8 +936,8 @@ function openEdit(id) {
 $('eSave').onclick = () => {
   const name = $('eName').value.trim();
   const monthly = parseAmt($('eMonthly').value);
-  if (!name) return alert('Bitte einen Namen eingeben.');
-  if (!(monthly >= 0)) return alert('Bitte einen gültigen Monatsbetrag eingeben.');
+  if (!name) return alert(tr('need_name'));
+  if (!(monthly >= 0)) return alert(tr('need_amount'));
   if (editId) {
     const b = budget(editId);
     Object.assign(b, { name, monthly, color: eColor, emoji: eEmoji, u: Date.now() });
@@ -848,7 +953,7 @@ $('eSave').onclick = () => {
 };
 $('eDelete').onclick = () => {
   const b = budget(editId);
-  if (!confirm(`Budget „${b.name}“ und alle Buchungen löschen?`)) return;
+  if (!confirm(tr('confirm_del_budget', b.name))) return;
   S.budgets = S.budgets.filter(x => x.id !== editId);
   S.tx = S.tx.filter(t => t.budgetId !== editId);
   S.deleted.push(editId);
@@ -937,34 +1042,40 @@ function renderSyncInd() {
 }
 function renderSyncBox() {
   const box = $('syncBox');
-  if (location.protocol === 'file:') { box.innerHTML = '<div class="hint">Nur verfügbar, wenn die App über deinen Server geöffnet wird.</div>'; return; }
+  if (location.protocol === 'file:') { box.innerHTML = `<div class="hint">${tr('sync_file_only')}</div>`; return; }
   if (!syncCfg.on) {
-    box.innerHTML = `<input class="field" id="syncToken" type="password" autocomplete="off" placeholder="Sync-Token vom Server">
-      <div class="hint">Das Token zeigt das Installationsskript an (im CT: <code>cat /etc/budget-app/token</code>).</div>
-      <button class="secondary" id="syncConnect">Verbinden</button>`;
+    box.innerHTML = `<input class="field" id="syncToken" type="password" autocomplete="off" placeholder="${tr('token_ph')}">
+      <div class="hint">${tr('token_hint')}</div>
+      <button class="secondary" id="syncConnect">${tr('connect')}</button>`;
     $('syncConnect').onclick = async () => {
       const tok = $('syncToken').value.trim();
       if (!tok) return;
       Object.assign(syncCfg, { on: true, token: tok }); saveSyncCfg();
       await syncNow();
-      if (syncState === 'auth') { syncCfg.on = false; saveSyncCfg(); alert('Token wurde nicht akzeptiert.'); renderSyncBox(); renderSyncInd(); }
-      else if (syncState === 'ok') toast('☁︎ Synchronisierung aktiv');
+      if (syncState === 'auth') { syncCfg.on = false; saveSyncCfg(); alert(tr('token_rejected')); renderSyncBox(); renderSyncInd(); }
+      else if (syncState === 'ok') toast(tr('sync_active'));
     };
     return;
   }
-  const txt = { ok: 'Synchronisiert', busy: 'Wird synchronisiert …', offline: 'Server nicht erreichbar – wird später nachgeholt', auth: 'Token ungültig' }[syncState] || 'Aktiv';
-  const last = syncCfg.last ? ' · zuletzt ' + new Date(syncCfg.last).toLocaleString('de-DE', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : '';
-  box.innerHTML = `<div class="setrow"><span>☁︎ ${txt}</span><small class="num" style="color:var(--muted)">${last.slice(3)}</small></div>
-    <button class="secondary" id="syncRun">Jetzt synchronisieren</button>
-    <button class="secondary danger" id="syncOff">Synchronisierung trennen</button>`;
+  const txt = ({ ok: tr('st_ok'), busy: tr('st_busy'), offline: tr('st_offline'), auth: tr('st_auth') })[syncState] || tr('st_on');
+  const last = syncCfg.last ? new Date(syncCfg.last).toLocaleString(LOC, { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : '';
+  box.innerHTML = `<div class="setrow"><span>☁︎ ${txt}</span><small class="num" style="color:var(--muted)">${last}</small></div>
+    <button class="secondary" id="syncRun">${tr('sync_now')}</button>
+    <button class="secondary danger" id="syncOff">${tr('sync_off')}</button>`;
   $('syncRun').onclick = syncNow;
   $('syncOff').onclick = () => {
-    if (!confirm('Synchronisierung auf diesem Gerät beenden? Die Daten bleiben erhalten.')) return;
+    if (!confirm(tr('confirm_sync_off'))) return;
     syncCfg = { on: false, token: '', last: 0 }; saveSyncCfg(); setSyncState(''); renderSyncBox();
   };
 }
 
 /* ===================== Start ===================== */
+applyI18n();
+$('langSel').value = LANG_PREF === 'de' || LANG_PREF === 'en' ? LANG_PREF : 'auto';
+$('langSel').onchange = e => {
+  try { e.target.value === 'auto' ? localStorage.removeItem(LANG_KEY) : localStorage.setItem(LANG_KEY, e.target.value); } catch { }
+  location.reload();
+};
 load(); render(); syncNow();
 if (navigator.storage && navigator.storage.persist) navigator.storage.persist();
 if ('serviceWorker' in navigator && location.protocol !== 'file:') navigator.serviceWorker.register('sw.js');

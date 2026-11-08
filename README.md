@@ -4,61 +4,64 @@
 
 <h1 align="center">Super Easy Budget</h1>
 
+<p align="center"><b>English</b> · <a href="README.de.md">Deutsch</a></p>
+
 <p align="center">
-  Budgets anlegen, Ausgaben mit einem Tipp abbuchen und sehen, wie viel pro Tag noch drin ist.<br>
-  Ohne Konto, ohne Bankanbindung, ohne Cloud eines Anbieters.
+  Create budgets, log an expense in one tap and see how much you can still spend per day.<br>
+  No account, no bank connection, no third-party cloud.
 </p>
 
 <p align="center">
-  <img src="docs/screenshots/start-light.png" width="200" alt="Startseite">
-  <img src="docs/screenshots/ausgabe.png" width="200" alt="Ausgabe erfassen">
-  <img src="docs/screenshots/monatsuebersicht.png" width="200" alt="Monatsübersicht">
-  <img src="docs/screenshots/monatsbilanz.png" width="200" alt="Monatsbilanz">
+  <img src="docs/screenshots/en/start-light.png" width="200" alt="Home screen">
+  <img src="docs/screenshots/en/expense.png" width="200" alt="Adding an expense">
+  <img src="docs/screenshots/en/month.png" width="200" alt="Monthly overview">
+  <img src="docs/screenshots/en/review.png" width="200" alt="Monthly review">
 </p>
 
-## Idee
+## Idea
 
-Die meisten Budget-Apps wollen alles können. Super Easy Budget kann genau eine Sache: Geld in Töpfe aufteilen und Ausgaben davon abziehen. Eine Ausgabe dauert drei Tipps: **−** drücken, Betrag eingeben, Budget wählen.
+Most budgeting apps try to do everything. Super Easy Budget does one thing: split your money into envelopes and subtract what you spend. Logging an expense takes three taps: press **−**, enter the amount, pick the budget.
 
-## Funktionen
+## Features
 
-- **Budgets** mit monatlichem Betrag, eigener Farbe und Symbol
-- **Ausgabe in Sekunden**, optional mit Notiz („Wocheneinkauf“, „Tanken“) und Vorschlägen aus früheren Notizen
-- **Pro Tag verfügbar** für jedes Budget und insgesamt, bis Monatsende
-- **Plan-Anzeige**: liegst du unter, im oder über Plan? Der Kopfbereich färbt sich entsprechend
-- **Spar-Ansporn**: Gold-Ziel pro Tag, Prognose zum Monatsende, Monatsbilanz mit Medaillen 🥇🥈🥉 und ein Sparschwein für Restbeträge
-- **Monatsübersicht** aller Ausgaben nach Tagen, auch für vergangene Monate
-- **Installierbar** auf dem Handy-Home-Bildschirm, funktioniert offline, hell und dunkel
-- **Optionaler Sync** über den eigenen Server, mit Zusammenführung mehrerer Geräte und täglicher Sicherung
+- **Budgets** with a monthly amount, their own colour and icon
+- **Log an expense in seconds**, optionally with a note ("weekly shop", "petrol") and suggestions from earlier notes
+- **Available per day** for each budget and in total, until the end of the month
+- **Plan indicator**: are you under, on or over plan? The header changes colour to match
+- **Motivation to save**: a daily gold target, an end-of-month forecast, a monthly review with medals 🥇🥈🥉 and a piggy bank for leftovers
+- **Monthly overview** of all expenses grouped by day, including past months
+- **Installable** on your phone's home screen, works offline, light and dark mode
+- **English and German**, picked from the device language or switchable in the settings
+- **Optional sync** through your own server, merging several devices, with daily backups
 
 <p align="center">
-  <img src="docs/screenshots/start-dark.png" width="200" alt="Dunkles Design">
+  <img src="docs/screenshots/en/start-dark.png" width="200" alt="Dark mode">
 </p>
 
-## Datenschutz
+## Privacy
 
-Alle Daten liegen im Browser auf deinem Gerät. Wenn du den Sync einschaltest, zusätzlich als eine JSON-Datei auf deinem eigenen Server. Es gibt keine Konten, keine Tracker und keine externen Dienste.
+All data lives in the browser on your device. If you turn on sync, it is also stored as a single JSON file on your own server. There are no accounts, no trackers and no external services.
 
 ## Installation
 
-Die App ist eine einzige HTML-Datei ohne Abhängigkeiten und ohne Build. Für Installation am Handy, Offline-Betrieb und Sync wird sie per HTTPS von einem kleinen nginx ausgeliefert.
+The app is a single HTML file with no dependencies and no build step. To install it on a phone, use it offline and sync, it is served over HTTPS by a small nginx.
 
-### Proxmox-Container (automatisch)
+### Proxmox container (automatic)
 
-Auf dem Proxmox-Host als root:
+On the Proxmox host as root:
 
 ```bash
 bash -c "$(curl -fsSL https://raw.githubusercontent.com/dieths/budget-app/main/deploy/proxmox-create-ct.sh)"
 ```
 
-Das Skript lädt die aktuelle Debian-Vorlage, legt einen unprivilegierten Container an (1 Kern, 256 MB RAM, 2 GB Disk) und richtet nginx, Sync und tägliche Sicherung ein. Optionale Variablen: `CTID`, `CT_HOSTNAME`, `STORAGE`, `TMPL_STORAGE`, `BRIDGE`, `IP` (z. B. `192.168.1.50/24`), `GW`, `DISK_GB`, `MEMORY`, `BRANCH`.
+The script downloads the current Debian template, creates an unprivileged container (1 core, 256 MB RAM, 2 GB disk) and sets up nginx, sync and daily backups. Optional variables: `CTID`, `CT_HOSTNAME`, `STORAGE`, `TMPL_STORAGE`, `BRIDGE`, `IP` (e.g. `192.168.1.50/24`), `GW`, `DISK_GB`, `MEMORY`, `BRANCH`.
 
 ```bash
 CTID=120 IP=192.168.1.50/24 GW=192.168.1.1 \
 bash -c "$(curl -fsSL https://raw.githubusercontent.com/dieths/budget-app/main/deploy/proxmox-create-ct.sh)"
 ```
 
-### Vorhandener Debian-Container oder -Server
+### Existing Debian container or server
 
 ```bash
 apt update && apt install -y git
@@ -66,44 +69,44 @@ git clone https://github.com/dieths/budget-app.git /opt/budget-app
 bash /opt/budget-app/deploy/install.sh
 ```
 
-Am Ende zeigt das Skript die Adresse und das **Sync-Token** an. Später abrufbar mit `cat /etc/budget-app/token`.
+At the end the script prints the address and the **sync token**. You can show it again later with `cat /etc/budget-app/token`.
 
 ### HTTPS
 
-Die App braucht HTTPS, z. B. über den Nginx Proxy Manager:
+The app needs HTTPS, for example via Nginx Proxy Manager:
 
-- Domain: z. B. `budget.example.com`
-- Weiterleitung an `http://<Container-IP>:80`
-- Let's-Encrypt-Zertifikat, „Force SSL“
+- Domain: e.g. `budget.example.com`
+- Forward to `http://<container-IP>:80`
+- Let's Encrypt certificate, "Force SSL"
 
-Danach die Adresse am Handy öffnen und „Zum Home-Bildschirm“ wählen.
+Then open the address on your phone and choose "Add to Home Screen".
 
-### Aktualisieren
+### Updating
 
 ```bash
 budget-update
 ```
 
-Token und Daten bleiben erhalten.
+Your token and data are kept.
 
-## Synchronisierung
+## Sync
 
-In der App unter ⚙︎ → Synchronisierung das Token eintragen. Die App gleicht dann nach jeder Buchung, beim Öffnen und bei wiederhergestellter Verbindung ab. Offline erfasste Ausgaben werden nachgeholt. Buchungen mehrerer Geräte werden über ihre ID zusammengeführt, Budget-Änderungen nach Zeitpunkt.
+In the app, go to ⚙︎ → Sync and enter the token. The app then syncs after every change, when it is opened and when the connection comes back. Expenses logged offline are sent later. Transactions from several devices are merged by their ID, budget changes by time.
 
-Der Server sichert die Daten täglich nach `/var/lib/budget-app/backups/` und hebt sie 60 Tage auf.
+The server backs up the data daily to `/var/lib/budget-app/backups/` and keeps 60 days.
 
-Ohne Sync: regelmäßig über ⚙︎ → „Daten exportieren“ sichern. Die Monatsbilanz erinnert daran.
+Without sync: back up regularly via ⚙︎ → "Export data". The monthly review reminds you.
 
-## Aufbau
+## Structure
 
 ```
-app/       Die App (index.html, Service Worker, Manifest, Icons)
-deploy/    Proxmox- und Installationsskript, nginx-Konfiguration
-docs/      Screenshots
+app/       The app (index.html, service worker, manifest, icons)
+deploy/    Proxmox and install scripts, nginx configuration
+docs/      Screenshots (en/de)
 ```
 
-Technik: HTML, CSS und JavaScript ohne Framework · `localStorage` · Service Worker · nginx mit WebDAV-PUT für den Sync.
+Tech: HTML, CSS and JavaScript without a framework · `localStorage` · service worker · nginx with WebDAV PUT for sync.
 
-## Lizenz
+## License
 
 [MIT](LICENSE)
