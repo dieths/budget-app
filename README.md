@@ -1,68 +1,109 @@
-# Super Easy Budget
+<p align="center">
+  <img src="app/icon-192.png" width="96" height="96" alt="Super Easy Budget">
+</p>
 
-Minimalistische Budget-App fürs Handy. Budgets anlegen, monatlich aufstocken, Ausgaben mit einem Tipp auf **−** abbuchen. Zeigt pro Budget und insgesamt, wie viel bis Monatsende **pro Tag** übrig ist.
+<h1 align="center">Super Easy Budget</h1>
 
-- Reine Web-App (HTML/CSS/JS, keine Abhängigkeiten, kein Build)
-- Installierbar als App (PWA), funktioniert offline
-- Daten liegen lokal auf dem Gerät (`localStorage`), optional Sync über den eigenen Server
-- Spar-Ansporn: Plan-Anzeige, Gold-Ziel pro Tag, Monatsbilanz mit Medaillen, Sparschwein
+<p align="center">
+  Budgets anlegen, Ausgaben mit einem Tipp abbuchen und sehen, wie viel pro Tag noch drin ist.<br>
+  Ohne Konto, ohne Bankanbindung, ohne Cloud eines Anbieters.
+</p>
 
-## Aufbau
+<p align="center">
+  <img src="docs/screenshots/start-light.png" width="200" alt="Startseite">
+  <img src="docs/screenshots/ausgabe.png" width="200" alt="Ausgabe erfassen">
+  <img src="docs/screenshots/monatsuebersicht.png" width="200" alt="Monatsübersicht">
+  <img src="docs/screenshots/monatsbilanz.png" width="200" alt="Monatsbilanz">
+</p>
 
-```
-app/      Die App selbst (wird von nginx ausgeliefert)
-deploy/   Skripte für Proxmox-LXC und nginx
-```
+## Idee
 
-## Bereitstellung als Proxmox-Container
+Die meisten Budget-Apps wollen alles können. Super Easy Budget kann genau eine Sache: Geld in Töpfe aufteilen und Ausgaben davon abziehen. Eine Ausgabe dauert drei Tipps: **−** drücken, Betrag eingeben, Budget wählen.
 
-Auf dem **Proxmox-Host** als root:
+## Funktionen
+
+- **Budgets** mit monatlichem Betrag, eigener Farbe und Symbol
+- **Ausgabe in Sekunden**, optional mit Notiz („Wocheneinkauf“, „Tanken“) und Vorschlägen aus früheren Notizen
+- **Pro Tag verfügbar** für jedes Budget und insgesamt, bis Monatsende
+- **Plan-Anzeige**: liegst du unter, im oder über Plan? Der Kopfbereich färbt sich entsprechend
+- **Spar-Ansporn**: Gold-Ziel pro Tag, Prognose zum Monatsende, Monatsbilanz mit Medaillen 🥇🥈🥉 und ein Sparschwein für Restbeträge
+- **Monatsübersicht** aller Ausgaben nach Tagen, auch für vergangene Monate
+- **Installierbar** auf dem Handy-Home-Bildschirm, funktioniert offline, hell und dunkel
+- **Optionaler Sync** über den eigenen Server, mit Zusammenführung mehrerer Geräte und täglicher Sicherung
+
+<p align="center">
+  <img src="docs/screenshots/start-dark.png" width="200" alt="Dunkles Design">
+</p>
+
+## Datenschutz
+
+Alle Daten liegen im Browser auf deinem Gerät. Wenn du den Sync einschaltest, zusätzlich als eine JSON-Datei auf deinem eigenen Server. Es gibt keine Konten, keine Tracker und keine externen Dienste.
+
+## Installation
+
+Die App ist eine einzige HTML-Datei ohne Abhängigkeiten und ohne Build. Für Installation am Handy, Offline-Betrieb und Sync wird sie per HTTPS von einem kleinen nginx ausgeliefert.
+
+### Proxmox-Container (automatisch)
+
+Auf dem Proxmox-Host als root:
 
 ```bash
 bash -c "$(curl -fsSL https://raw.githubusercontent.com/dieths/budget-app/main/deploy/proxmox-create-ct.sh)"
 ```
 
-Mit eigenen Werten, z. B. fester IP:
+Das Skript lädt die aktuelle Debian-Vorlage, legt einen unprivilegierten Container an (1 Kern, 256 MB RAM, 2 GB Disk) und richtet nginx, Sync und tägliche Sicherung ein. Optionale Variablen: `CTID`, `CT_HOSTNAME`, `STORAGE`, `TMPL_STORAGE`, `BRIDGE`, `IP` (z. B. `192.168.1.50/24`), `GW`, `DISK_GB`, `MEMORY`, `BRANCH`.
 
 ```bash
 CTID=120 IP=192.168.1.50/24 GW=192.168.1.1 \
 bash -c "$(curl -fsSL https://raw.githubusercontent.com/dieths/budget-app/main/deploy/proxmox-create-ct.sh)"
 ```
 
-Das Skript lädt die aktuelle Debian-Vorlage, legt einen unprivilegierten CT an (1 Kern, 256 MB RAM, 2 GB Disk), installiert nginx und klont dieses Repository nach `/opt/budget-app`.
+### Vorhandener Debian-Container oder -Server
 
-Optionale Variablen: `CTID`, `CT_HOSTNAME`, `STORAGE`, `TMPL_STORAGE`, `BRIDGE`, `IP` (z. B. `192.168.1.50/24`), `GW`, `DISK_GB`, `MEMORY`, `BRANCH`.
+```bash
+apt update && apt install -y git
+git clone https://github.com/dieths/budget-app.git /opt/budget-app
+bash /opt/budget-app/deploy/install.sh
+```
 
-Alternativ in einem vorhandenen Debian-CT: `bash deploy/install.sh dieths/budget-app`
+Am Ende zeigt das Skript die Adresse und das **Sync-Token** an. Später abrufbar mit `cat /etc/budget-app/token`.
 
-### HTTPS über Nginx Proxy Manager
+### HTTPS
 
-Installierbarkeit und Offline-Betrieb brauchen HTTPS. Im Nginx Proxy Manager einen Proxy Host anlegen:
+Die App braucht HTTPS, z. B. über den Nginx Proxy Manager:
 
-- Domain: z. B. `budget.deine-domain.de`
-- Forward: `http://<CT-IP>:80`
-- SSL: Let's-Encrypt-Zertifikat, „Force SSL“ an
+- Domain: z. B. `budget.example.com`
+- Weiterleitung an `http://<Container-IP>:80`
+- Let's-Encrypt-Zertifikat, „Force SSL“
 
-Danach die Seite am Handy öffnen und „Zum Home-Bildschirm“ wählen.
+Danach die Adresse am Handy öffnen und „Zum Home-Bildschirm“ wählen.
 
 ### Aktualisieren
 
 ```bash
-pct exec <CTID> -- budget-update
+budget-update
 ```
+
+Token und Daten bleiben erhalten.
 
 ## Synchronisierung
 
-Der Container stellt unter `/api/data.json` einen kleinen Speicher bereit (nginx, GET/PUT), geschützt durch ein Token. Das Token gibt das Installationsskript aus, später abrufbar mit:
+In der App unter ⚙︎ → Synchronisierung das Token eintragen. Die App gleicht dann nach jeder Buchung, beim Öffnen und bei wiederhergestellter Verbindung ab. Offline erfasste Ausgaben werden nachgeholt. Buchungen mehrerer Geräte werden über ihre ID zusammengeführt, Budget-Änderungen nach Zeitpunkt.
 
-```bash
-pct exec <CTID> -- cat /etc/budget-app/token
+Der Server sichert die Daten täglich nach `/var/lib/budget-app/backups/` und hebt sie 60 Tage auf.
+
+Ohne Sync: regelmäßig über ⚙︎ → „Daten exportieren“ sichern. Die Monatsbilanz erinnert daran.
+
+## Aufbau
+
+```
+app/       Die App (index.html, Service Worker, Manifest, Icons)
+deploy/    Proxmox- und Installationsskript, nginx-Konfiguration
+docs/      Screenshots
 ```
 
-In der App unter ⚙︎ → Synchronisierung eintragen. Danach gleicht die App nach jeder Buchung, beim Öffnen und bei wiederhergestellter Verbindung ab. Offline erfasste Buchungen werden später nachgeholt. Mehrere Geräte werden zusammengeführt (Buchungen über ihre ID, Budget-Änderungen nach Zeitpunkt).
+Technik: HTML, CSS und JavaScript ohne Framework · `localStorage` · Service Worker · nginx mit WebDAV-PUT für den Sync.
 
-Der Server sichert die Daten täglich nach `/var/lib/budget-app/backups/` (60 Tage).
+## Lizenz
 
-## Datensicherung ohne Sync
-
-Die Daten liegen dann nur im Browser des jeweiligen Geräts. Regelmäßig über ⚙︎ → „Daten exportieren“ sichern – die Monatsbilanz erinnert daran.
+[MIT](LICENSE)
