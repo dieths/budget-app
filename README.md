@@ -1,4 +1,4 @@
-# Budget
+# Super Easy Budget
 
 Minimalistische Budget-App fürs Handy. Budgets anlegen, monatlich aufstocken, Ausgaben mit einem Tipp auf **−** abbuchen. Zeigt pro Budget und insgesamt, wie viel bis Monatsende **pro Tag** übrig ist.
 
