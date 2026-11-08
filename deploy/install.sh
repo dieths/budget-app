@@ -15,7 +15,7 @@ export DEBIAN_FRONTEND=noninteractive
 apt-get update -qq
 apt-get install -y -qq nginx git ca-certificates cron openssl >/dev/null
 
-SRC="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+SRC="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")/.." 2>/dev/null && pwd)"
 if [ "$SRC" != "$DIR" ] && [ -f "$SRC/app/index.html" ] && [ ! -d "$SRC/.git" ] && [ ! -d "$DIR/.git" ]; then
   echo "==> App aus lokaler Kopie übernehmen ($SRC)"
   MODE=local
