@@ -1,6 +1,6 @@
 {
-  "name": "Budget",
-  "short_name": "Budget",
+  "name": "Super Easy Budget",
+  "short_name": "Easy Budget",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",

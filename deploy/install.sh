@@ -89,6 +89,7 @@ exec bash /root/budget-src/deploy/install.sh
 EOF
 fi
 chmod +x /usr/local/bin/budget-update
+ln -sf /usr/local/bin/budget-update /usr/bin/budget-update
 
 IP=$(hostname -I | awk '{print $1}')
 echo
