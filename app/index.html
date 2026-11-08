@@ -107,6 +107,15 @@ header h1{font-size:23px;margin:0;font-weight:750;letter-spacing:-.02em;flex:1}
 .sheet h2 button{color:var(--muted);font-size:15px;font-weight:500}
 .amount{width:100%;font-size:40px;font-weight:750;text-align:center;padding:14px;border:0;border-radius:16px;
   background:var(--card);color:var(--text);outline:none;box-shadow:var(--shadow)}
+.note-in{margin-top:10px;text-align:center;font-size:16px}
+.tx .n{font-weight:500;font-size:15px}
+.tx .n .a{margin-right:6px}
+.mnav{display:flex;align-items:center;gap:4px}
+.mnav button{width:34px;height:34px;border-radius:10px;font-size:22px;color:var(--muted)}
+.mnav button:disabled{opacity:.25}
+.msum{color:var(--muted);font-size:14px;margin:-6px 0 6px}
+.dayh{font-size:12px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin:16px 0 2px}
+.hero{cursor:pointer}
 .chips{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;margin:16px 0}
 .chip{padding:9px 11px;border-radius:14px;background:var(--card);border:2px solid transparent;text-align:left;display:flex;gap:10px;align-items:center;box-shadow:var(--shadow)}
 .chip .e{font-size:20px;width:36px;height:36px;border-radius:11px;display:flex;align-items:center;justify-content:center;flex:none}
@@ -189,6 +198,8 @@ input.field{width:100%;padding:12px 14px;font-size:17px;border-radius:13px;borde
   <div class="grip"></div>
   <h2>Ausgabe <button data-close>Abbrechen</button></h2>
   <input class="amount num" id="amt" inputmode="decimal" placeholder="0,00 €" autocomplete="off">
+  <input class="field note-in" id="note" list="noteList" maxlength="80" autocomplete="off" enterkeyhint="done" placeholder="Wofür? (optional)">
+  <datalist id="noteList"></datalist>
   <div class="chips" id="chips"></div>
   <button class="primary" id="btnBook" disabled>Abbuchen</button>
 </div>
@@ -202,6 +213,14 @@ input.field{width:100%;padding:12px 14px;font-size:17px;border-radius:13px;borde
   <div class="section">Buchungen</div>
   <div id="dTx"></div>
   <button class="secondary" id="dEdit">Budget bearbeiten</button>
+</div>
+
+<!-- Monatsübersicht -->
+<div class="sheet" id="sMonth">
+  <div class="grip"></div>
+  <h2><span class="mnav"><button id="mPrev" aria-label="Vorheriger Monat">‹</button><span id="mTitle"></span><button id="mNext" aria-label="Nächster Monat">›</button></span> <button data-close>Fertig</button></h2>
+  <div class="msum num" id="mSum"></div>
+  <div id="mList"></div>
 </div>
 
 <!-- Monatsbilanz -->
@@ -484,7 +503,7 @@ function render() {
   const fc = forecast(), fm = monthly > 0 ? medalFor(fc / monthly) : null;
   $('hero').innerHTML = `<div class="hero ${st.c}">
       <div style="flex:1;min-width:0">
-        <div class="lbl">Noch verfügbar ${st.t ? `<span class="status soft num">${st.t}</span>` : ''}</div>
+        <div class="lbl">Noch verfügbar ${st.t ? `<span class="status soft num">${st.t}</span>` : ''}<span style="margin-left:auto;font-weight:600">Ausgaben ›</span></div>
         <div class="tot num">${eur.format(total)}</div>
         <div class="day soft num">≈ ${eur.format(perDay(total))} / Tag</div>
         ${goal ? `<div class="goal num">${goal}</div>` : ''}
@@ -546,7 +565,11 @@ let selBudget = null, chipOrder = [];
 function openExpense() {
   chipOrder = usageOrder();
   selBudget = S.budgets.length === 1 ? S.budgets[0].id : null;
-  $('amt').value = '';
+  $('amt').value = ''; $('note').value = '';
+  // Vorschläge: zuletzt verwendete Notizen
+  const seen = new Set();
+  [...S.tx].reverse().forEach(t => { if (t.note && seen.size < 30) seen.add(t.note); });
+  $('noteList').innerHTML = [...seen].map(n => `<option value="${esc(n)}">`).join('');
   renderChips(); updateBookBtn();
   show('sExpense');
   setTimeout(() => $('amt').focus(), 60);
@@ -571,11 +594,13 @@ function updateBookBtn() {
 }
 $('amt').oninput = updateBookBtn;
 $('amt').onkeydown = e => { if (e.key === 'Enter' && !$('btnBook').disabled) $('btnBook').click(); };
+$('note').onkeydown = e => { if (e.key === 'Enter') { e.preventDefault(); $('note').blur(); } };
 $('btnBook').onclick = () => {
   const a = parseAmt($('amt').value);
   if (!(a > 0) || !selBudget) return;
   const b = budget(selBudget);
-  const t = addTx(selBudget, a, 'expense');
+  const note = $('note').value.trim().slice(0, 80);
+  const t = addTx(selBudget, a, 'expense', note ? { note } : null);
   save(); render(); closeSheet();
   toast(`${b.emoji} −${eur.format(a)} · noch ≈ ${eur.format(perDay(bal(b.id)))}/Tag`, () => { removeTx(t.id); save(); render(); });
 };
@@ -669,7 +694,7 @@ function openDetail(id) {
     const d = new Date(t.ts), plus = t.type === 'topup' || (t.type === 'adjust' && t.amount > 0);
     const el = document.createElement('div');
     el.className = 'tx';
-    el.innerHTML = `<div><div class="a num ${t.type === 'expense' ? 'neg' : plus ? 'plus' : ''}">${plus ? '+' : '−'} ${eur.format(Math.abs(t.amount))}</div>
+    el.innerHTML = `<div style="min-width:0"><div class="n"><span class="a num ${t.type === 'expense' ? 'neg' : plus ? 'plus' : ''}">${plus ? '+' : '−'} ${eur.format(Math.abs(t.amount))}</span>${t.note ? esc(t.note) : ''}</div>
       <div class="d">${label[t.type] || ''}${d.toLocaleDateString('de-DE')} ${d.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' })}</div></div>
       <button aria-label="Löschen">✕</button>`;
     el.querySelector('button').onclick = () => {
@@ -681,6 +706,45 @@ function openDetail(id) {
   show('sDetail');
 }
 $('dEdit').onclick = () => openEdit(detailId);
+
+/* ===================== Monatsübersicht ===================== */
+let monthView = monthKey();
+function openMonth(mk) {
+  monthView = mk || monthKey();
+  const [y, m] = monthView.split('-').map(Number);
+  const first = S.tx.filter(t => t.type === 'expense' && t.ts > 0).reduce((a, t) => Math.min(a, t.ts), Date.now());
+  $('mTitle').textContent = new Date(y, m - 1, 1).toLocaleDateString('de-DE', { month: 'long', year: 'numeric' });
+  $('mPrev').disabled = monthView <= monthKey(new Date(first));
+  $('mNext').disabled = monthView >= monthKey();
+  const tx = S.tx.filter(t => t.type === 'expense' && t.ts > 0 && monthKey(new Date(t.ts)) === monthView).sort((a, b) => b.ts - a.ts);
+  const sum = tx.reduce((s, t) => s + t.amount, 0);
+  $('mSum').textContent = tx.length ? `${tx.length} ${tx.length === 1 ? "Ausgabe" : "Ausgaben"} · ${eur.format(sum)}` : '';
+  const box = $('mList'); box.innerHTML = '';
+  if (!tx.length) box.innerHTML = '<div class="center-muted" style="padding:20px">Keine Ausgaben in diesem Monat</div>';
+  let day = '';
+  tx.forEach(t => {
+    const d = new Date(t.ts), dk = d.toDateString();
+    if (dk !== day) {
+      day = dk;
+      const dayTx = tx.filter(x => new Date(x.ts).toDateString() === dk);
+      const h = document.createElement('div'); h.className = 'dayh num';
+      h.textContent = d.toLocaleDateString('de-DE', { weekday: 'short', day: '2-digit', month: '2-digit' }) + ' · ' + eur.format(dayTx.reduce((s, x) => s + x.amount, 0));
+      box.appendChild(h);
+    }
+    const b = budget(t.budgetId);
+    const el = document.createElement('div');
+    el.className = 'tx';
+    el.innerHTML = `<div style="min-width:0"><div class="n">${t.note ? esc(t.note) : `<span style="color:var(--muted)">ohne Notiz</span>`}</div>
+      <div class="d">${b ? b.emoji + ' ' + esc(b.name) + ' · ' : ''}${d.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' })}</div></div>
+      <span class="a num neg" style="white-space:nowrap">− ${eur.format(t.amount)}</span>`;
+    box.appendChild(el);
+  });
+  if (openSheet !== 'sMonth') show('sMonth');
+}
+const shiftMonth = (mk, n) => { const [y, m] = mk.split('-').map(Number); return monthKey(new Date(y, m - 1 + n, 1)); };
+$('mPrev').onclick = () => openMonth(shiftMonth(monthView, -1));
+$('mNext').onclick = () => openMonth(shiftMonth(monthView, 1));
+$('hero').onclick = () => { if (S.budgets.length) openMonth(); };
 
 /* ===================== Einstellungen ===================== */
 function openSettings() {
