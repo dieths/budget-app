@@ -6,7 +6,7 @@
 #   CTID=120 IP=192.168.1.50/24 GW=192.168.1.1 bash proxmox-create-ct.sh
 set -euo pipefail
 
-GITHUB_REPO="${GITHUB_REPO:-DEIN-NAME/budget-app}"
+GITHUB_REPO="${GITHUB_REPO:-itzlbritzl/budget-app}"
 BRANCH="${BRANCH:-main}"
 CTID="${CTID:-$(pvesh get /cluster/nextid)}"
 CT_HOSTNAME="${CT_HOSTNAME:-budget}"
