@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 # Installiert oder aktualisiert die Budget-App in einem Debian-Container (läuft IM CT als root).
-# Aufruf: bash install.sh [GITHUB_REPO]   z. B. bash install.sh itzlbritzl/budget-app
+# Aufruf: bash install.sh [GITHUB_REPO]   z. B. bash install.sh dieths/budget-app
 # Mehrfach ausführbar: vorhandenes Token und Daten bleiben erhalten.
 set -euo pipefail
 
-GITHUB_REPO="${1:-${GITHUB_REPO:-itzlbritzl/budget-app}}"
+GITHUB_REPO="${1:-${GITHUB_REPO:-dieths/budget-app}}"
 BRANCH="${BRANCH:-main}"
 DIR=/opt/budget-app
 DATA=/var/lib/budget-app

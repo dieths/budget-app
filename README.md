@@ -19,21 +19,21 @@ deploy/   Skripte für Proxmox-LXC und nginx
 Auf dem **Proxmox-Host** als root:
 
 ```bash
-bash -c "$(curl -fsSL https://raw.githubusercontent.com/itzlbritzl/budget-app/main/deploy/proxmox-create-ct.sh)"
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/dieths/budget-app/main/deploy/proxmox-create-ct.sh)"
 ```
 
 Mit eigenen Werten, z. B. fester IP:
 
 ```bash
 CTID=120 IP=192.168.1.50/24 GW=192.168.1.1 \
-bash -c "$(curl -fsSL https://raw.githubusercontent.com/itzlbritzl/budget-app/main/deploy/proxmox-create-ct.sh)"
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/dieths/budget-app/main/deploy/proxmox-create-ct.sh)"
 ```
 
 Das Skript lädt die aktuelle Debian-Vorlage, legt einen unprivilegierten CT an (1 Kern, 256 MB RAM, 2 GB Disk), installiert nginx und klont dieses Repository nach `/opt/budget-app`.
 
 Optionale Variablen: `CTID`, `CT_HOSTNAME`, `STORAGE`, `TMPL_STORAGE`, `BRIDGE`, `IP` (z. B. `192.168.1.50/24`), `GW`, `DISK_GB`, `MEMORY`, `BRANCH`.
 
-Alternativ in einem vorhandenen Debian-CT: `bash deploy/install.sh itzlbritzl/budget-app`
+Alternativ in einem vorhandenen Debian-CT: `bash deploy/install.sh dieths/budget-app`
 
 ### HTTPS über Nginx Proxy Manager
 
