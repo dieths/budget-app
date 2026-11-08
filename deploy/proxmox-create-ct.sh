@@ -44,20 +44,26 @@ pct create "$CTID" "$TMPL_STORAGE:vztmpl/$TEMPLATE" \
 
 echo "==> Warte auf Netzwerk"
 for i in $(seq 1 30); do
-  pct exec "$CTID" -- getent hosts github.com >/dev/null 2>&1 && break
+  pct exec "$CTID" -- getent hosts deb.debian.org >/dev/null 2>&1 && break
   sleep 2
 done
 
 echo "==> Installiere App im Container"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" 2>/dev/null && pwd || true)"
-if [ -n "$SCRIPT_DIR" ] && [ -f "$SCRIPT_DIR/install.sh" ]; then
-  pct push "$CTID" "$SCRIPT_DIR/install.sh" /root/install.sh
+if [ -n "$SCRIPT_DIR" ] && [ -f "$SCRIPT_DIR/../app/index.html" ]; then
+  # Lokale Kopie (z. B. entpacktes Archiv): komplett in den CT übertragen
+  TMP=$(mktemp /tmp/budget-src.XXXXXX.tar.gz)
+  tar -C "$SCRIPT_DIR/.." --exclude=.git -czf "$TMP" app deploy README.md
+  pct push "$CTID" "$TMP" /root/budget-src.tar.gz
+  rm -f "$TMP"
+  pct exec "$CTID" -- bash -c "rm -rf /root/budget-src && mkdir -p /root/budget-src && tar -xzf /root/budget-src.tar.gz -C /root/budget-src"
+  pct exec "$CTID" -- bash /root/budget-src/deploy/install.sh
 else
   pct exec "$CTID" -- bash -c "apt-get update -qq && apt-get install -y -qq curl >/dev/null"
   pct exec "$CTID" -- curl -fsSL -o /root/install.sh \
     "https://raw.githubusercontent.com/$GITHUB_REPO/$BRANCH/deploy/install.sh"
+  pct exec "$CTID" -- env BRANCH="$BRANCH" bash /root/install.sh "$GITHUB_REPO"
 fi
-pct exec "$CTID" -- env BRANCH="$BRANCH" bash /root/install.sh "$GITHUB_REPO"
 
 echo
-echo "CT $CTID ist bereit. Updates später mit:  pct exec $CTID -- budget-update"
+echo "CT $CTID ist bereit."
