@@ -89,6 +89,10 @@ budget-update
 
 Token und Daten bleiben erhalten.
 
+## iOS-App
+
+Das Repository enthält auch die iOS-Hülle (Capacitor) für den App Store. Store-Texte, Screenshots und das 1024er-Icon liegen in [`docs/appstore`](docs/appstore). In der iOS-App liegen die Daten zusätzlich im App-eigenen Speicher, und der Sync fragt nach der Server-Adresse.
+
 ## Synchronisierung
 
 In der App unter ⚙︎ → Synchronisierung das Token eintragen. Die App gleicht dann nach jeder Buchung, beim Öffnen und bei wiederhergestellter Verbindung ab. Offline erfasste Ausgaben werden nachgeholt. Buchungen mehrerer Geräte werden über ihre ID zusammengeführt, Budget-Änderungen nach Zeitpunkt.

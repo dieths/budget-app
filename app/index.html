@@ -274,6 +274,10 @@ input.field,select.field{width:100%;padding:12px 14px;font-size:17px;border-radi
 <script>
 /* ===================== Grundlagen ===================== */
 const KEY = 'budget-app-v1', SYNC_KEY = 'budget-sync';
+// In der iOS-App (Capacitor) liegen die Daten zusätzlich im App-Speicher, den iOS nicht aufräumt.
+const NATIVE = !!(window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform());
+const plugin = name => NATIVE && window.Capacitor.Plugins ? window.Capacitor.Plugins[name] : null;
+const nativeSet = (key, value) => { const p = plugin('Preferences'); if (p) p.set({ key, value }).catch(() => { }); };
 const COLORS = ['#6f78c4', '#c4789a', '#cf9a4c', '#4f9d7e', '#4e98ad', '#9180c0', '#c06d68', '#86a654', '#cc8352', '#5e93c9'];
 const OLD_COLORS = ['#6366f1', '#ec4899', '#f59e0b', '#10b981', '#06b6d4', '#8b5cf6', '#ef4444', '#84cc16', '#f97316', '#0ea5e9'];
 const EMOJIS = ['🛒', '🍽️', '☕', '⛽', '🚗', '🏠', '💡', '📱', '👕', '🎁', '🎉', '🎮', '📚', '🐾', '✈️', '💊'];
@@ -323,7 +327,7 @@ const I18N = {
     import_failed: e => 'Import fehlgeschlagen: ' + e, edit_title: 'Budget bearbeiten', new_title: 'Neues Budget',
     need_name: 'Bitte einen Namen eingeben.', need_amount: 'Bitte einen gültigen Monatsbetrag eingeben.',
     confirm_del_budget: n => `Budget „${n}“ und alle Buchungen löschen?`, color_aria: 'Farbe',
-    sync_file_only: 'Nur verfügbar, wenn die App über deinen Server geöffnet wird.', token_ph: 'Sync-Token vom Server',
+    sync_file_only: 'Nur verfügbar, wenn die App über deinen Server geöffnet wird.', token_ph: 'Sync-Token vom Server', url_ph: 'Server-Adresse, z. B. budget.example.com',
     token_hint: 'Das Token zeigt das Installationsskript an (im CT: <code>cat /etc/budget-app/token</code>).', connect: 'Verbinden',
     token_rejected: 'Token wurde nicht akzeptiert.', sync_active: '☁︎ Synchronisierung aktiv',
     st_ok: 'Synchronisiert', st_busy: 'Wird synchronisiert …', st_offline: 'Server nicht erreichbar – wird später nachgeholt', st_auth: 'Token ungültig', st_on: 'Aktiv',
@@ -365,7 +369,7 @@ const I18N = {
     import_failed: e => 'Import failed: ' + e, edit_title: 'Edit budget', new_title: 'New budget',
     need_name: 'Please enter a name.', need_amount: 'Please enter a valid monthly amount.',
     confirm_del_budget: n => `Delete budget “${n}” and all its transactions?`, color_aria: 'Colour',
-    sync_file_only: 'Only available when the app is opened from your server.', token_ph: 'Sync token from the server',
+    sync_file_only: 'Only available when the app is opened from your server.', token_ph: 'Sync token from the server', url_ph: 'Server address, e.g. budget.example.com',
     token_hint: 'The install script shows the token (in the container: <code>cat /etc/budget-app/token</code>).', connect: 'Connect',
     token_rejected: 'Token was not accepted.', sync_active: '☁︎ Sync active',
     st_ok: 'Synced', st_busy: 'Syncing …', st_offline: 'Server unreachable – will retry later', st_auth: 'Invalid token', st_on: 'Active',
@@ -483,7 +487,9 @@ function load() {
   calc();
 }
 function persist() {
-  try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { alert(tr('save_failed', e.message)); }
+  const json = JSON.stringify(S);
+  try { localStorage.setItem(KEY, json); } catch (e) { if (!NATIVE) alert(tr('save_failed', e.message)); }
+  nativeSet(KEY, json);
 }
 function save() { S.updated = Date.now(); persist(); calc(); scheduleSync(); }
 
@@ -708,6 +714,8 @@ $('btnBook').onclick = () => {
   const note = $('note').value.trim().slice(0, 80);
   const t = addTx(selBudget, a, 'expense', note ? { note } : null);
   save(); render(); closeSheet();
+  const hap = plugin('Haptics');
+  if (hap) hap.impact({ style: 'LIGHT' }).catch(() => { }); else if (navigator.vibrate) navigator.vibrate(12);
   toast(tr('toast_booked', b.emoji, eur.format(a), eur.format(perDay(bal(b.id)))), () => { removeTx(t.id); save(); render(); });
 };
 $('fab').onclick = openExpense;
@@ -880,11 +888,20 @@ $('btnSavingsOut').onclick = () => {
   addTx(null, Math.min(a, Math.max(0, SAVINGS)), 'withdraw');
   save(); render(); $('setSavings').textContent = eur.format(SAVINGS);
 };
-function exportData() {
+async function exportData() {
+  const name = tr('export_file') + new Date().toISOString().slice(0, 10) + '.json';
+  const fs = plugin('Filesystem'), share = plugin('Share');
+  if (fs && share) {
+    try {
+      const w = await fs.writeFile({ path: name, data: JSON.stringify(S, null, 2), directory: 'CACHE', encoding: 'utf8' });
+      await share.share({ title: name, files: [w.uri] });
+    } catch (e) { if (!/cancel/i.test(String(e && e.message))) alert(tr('import_failed', e.message || e)); }
+    return;
+  }
   const blob = new Blob([JSON.stringify(S, null, 2)], { type: 'application/json' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = tr('export_file') + new Date().toISOString().slice(0, 10) + '.json';
+  a.download = name;
   a.click();
   setTimeout(() => URL.revokeObjectURL(a.href), 1000);
 }
@@ -964,10 +981,12 @@ $('eDelete').onclick = () => {
    Speichert eine JSON-Datei per HTTP PUT auf dem eigenen Server
    (nginx im Proxmox-CT). Beim Abgleich werden beide Stände
    zusammengeführt: Buchungen über ihre IDs, Budgets nach letzter Änderung. */
-const SYNC_URL = 'api/data.json';
-let syncCfg = { on: false, token: '', last: 0 }, syncState = '', syncBusy = false, syncAgain = false, syncTimer;
+let syncCfg = { on: false, token: '', url: '', last: 0 }, syncState = '', syncBusy = false, syncAgain = false, syncTimer;
 try { Object.assign(syncCfg, JSON.parse(localStorage.getItem(SYNC_KEY)) || {}); } catch { }
-const saveSyncCfg = () => { try { localStorage.setItem(SYNC_KEY, JSON.stringify(syncCfg)); } catch { } };
+const saveSyncCfg = () => { const j = JSON.stringify(syncCfg); try { localStorage.setItem(SYNC_KEY, j); } catch { } nativeSet(SYNC_KEY, j); };
+// Im Browser liegt die App auf dem Server selbst; in der iOS-App wird die Server-Adresse eingetragen.
+const syncUrl = () => syncCfg.url ? syncCfg.url.replace(/\/+$/, '') + '/api/data.json' : 'api/data.json';
+const syncPossible = () => NATIVE ? !!syncCfg.url : location.protocol !== 'file:';
 
 function merge(a, b) {
   const deleted = new Set([...(a.deleted || []), ...(b.deleted || [])]);
@@ -1006,12 +1025,12 @@ const fingerprint = d => JSON.stringify([
 
 function scheduleSync() { if (syncCfg.on) { clearTimeout(syncTimer); syncTimer = setTimeout(syncNow, 1200); } }
 async function syncNow() {
-  if (!syncCfg.on || location.protocol === 'file:') return;
+  if (!syncCfg.on || !syncPossible()) return;
   if (syncBusy) { syncAgain = true; return; }
   syncBusy = true; setSyncState('busy');
   const hdr = { 'X-Sync-Token': syncCfg.token };
   try {
-    const r = await fetch(SYNC_URL, { headers: hdr, cache: 'no-store' });
+    const r = await fetch(syncUrl(), { headers: hdr, cache: 'no-store' });
     if (r.status === 401 || r.status === 403) throw new Error('auth');
     if (!r.ok && r.status !== 404) throw new Error('http');
     const remote = r.ok ? migrate(await r.json()) : null;
@@ -1020,7 +1039,7 @@ async function syncNow() {
     if (fingerprint(S) !== before) { persist(); render(); if (openSheet === 'sDetail' && detailId && budget(detailId)) openDetail(detailId); }
     if (!remote || fingerprint(remote) !== fingerprint(S)) {
       S.updated = Date.now(); persist();
-      const p = await fetch(SYNC_URL, { method: 'PUT', headers: { ...hdr, 'Content-Type': 'application/json' }, body: JSON.stringify(S) });
+      const p = await fetch(syncUrl(), { method: 'PUT', headers: { ...hdr, 'Content-Type': 'application/json' }, body: JSON.stringify(S) });
       if (p.status === 401 || p.status === 403) throw new Error('auth');
       if (!p.ok) throw new Error('http');
     }
@@ -1042,15 +1061,17 @@ function renderSyncInd() {
 }
 function renderSyncBox() {
   const box = $('syncBox');
-  if (location.protocol === 'file:') { box.innerHTML = `<div class="hint">${tr('sync_file_only')}</div>`; return; }
+  if (!NATIVE && location.protocol === 'file:') { box.innerHTML = `<div class="hint">${tr('sync_file_only')}</div>`; return; }
   if (!syncCfg.on) {
-    box.innerHTML = `<input class="field" id="syncToken" type="password" autocomplete="off" placeholder="${tr('token_ph')}">
+    box.innerHTML = `${NATIVE ? `<input class="field" id="syncUrl" type="url" inputmode="url" autocapitalize="off" autocomplete="off" placeholder="${tr('url_ph')}" style="margin-bottom:8px">` : ''}<input class="field" id="syncToken" type="password" autocomplete="off" placeholder="${tr('token_ph')}">
       <div class="hint">${tr('token_hint')}</div>
       <button class="secondary" id="syncConnect">${tr('connect')}</button>`;
     $('syncConnect').onclick = async () => {
       const tok = $('syncToken').value.trim();
-      if (!tok) return;
-      Object.assign(syncCfg, { on: true, token: tok }); saveSyncCfg();
+      let url = NATIVE ? $('syncUrl').value.trim() : '';
+      if (NATIVE && url && !/^https?:\/\//i.test(url)) url = 'https://' + url;
+      if (!tok || (NATIVE && !url)) return;
+      Object.assign(syncCfg, { on: true, token: tok, url }); saveSyncCfg();
       await syncNow();
       if (syncState === 'auth') { syncCfg.on = false; saveSyncCfg(); alert(tr('token_rejected')); renderSyncBox(); renderSyncInd(); }
       else if (syncState === 'ok') toast(tr('sync_active'));
@@ -1060,12 +1081,13 @@ function renderSyncBox() {
   const txt = ({ ok: tr('st_ok'), busy: tr('st_busy'), offline: tr('st_offline'), auth: tr('st_auth') })[syncState] || tr('st_on');
   const last = syncCfg.last ? new Date(syncCfg.last).toLocaleString(LOC, { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : '';
   box.innerHTML = `<div class="setrow"><span>☁︎ ${txt}</span><small class="num" style="color:var(--muted)">${last}</small></div>
+    ${syncCfg.url ? `<div class="hint" style="word-break:break-all">${esc(syncCfg.url)}</div>` : ''}
     <button class="secondary" id="syncRun">${tr('sync_now')}</button>
     <button class="secondary danger" id="syncOff">${tr('sync_off')}</button>`;
   $('syncRun').onclick = syncNow;
   $('syncOff').onclick = () => {
     if (!confirm(tr('confirm_sync_off'))) return;
-    syncCfg = { on: false, token: '', last: 0 }; saveSyncCfg(); setSyncState(''); renderSyncBox();
+    syncCfg = { on: false, token: '', url: '', last: 0 }; saveSyncCfg(); setSyncState(''); renderSyncBox();
   };
 }
 
@@ -1076,9 +1098,21 @@ $('langSel').onchange = e => {
   try { e.target.value === 'auto' ? localStorage.removeItem(LANG_KEY) : localStorage.setItem(LANG_KEY, e.target.value); } catch { }
   location.reload();
 };
-load(); render(); syncNow();
-if (navigator.storage && navigator.storage.persist) navigator.storage.persist();
-if ('serviceWorker' in navigator && location.protocol !== 'file:') navigator.serviceWorker.register('sw.js');
+async function restoreNative() {
+  const p = plugin('Preferences');
+  if (!p) return;
+  for (const key of [KEY, SYNC_KEY]) {
+    try {
+      const r = await p.get({ key });
+      if (r && r.value) localStorage.setItem(key, r.value);
+      else { const v = localStorage.getItem(key); if (v) nativeSet(key, v); }   // erster Start: vorhandene Daten übernehmen
+    } catch { }
+  }
+  try { Object.assign(syncCfg, JSON.parse(localStorage.getItem(SYNC_KEY)) || {}); } catch { }
+}
+restoreNative().then(() => { load(); render(); syncNow(); });
+if (!NATIVE && navigator.storage && navigator.storage.persist) navigator.storage.persist();
+if (!NATIVE && 'serviceWorker' in navigator && location.protocol !== 'file:') navigator.serviceWorker.register('sw.js');
 document.addEventListener('visibilitychange', () => { if (!document.hidden) { render(); syncNow(); } });
 window.addEventListener('online', syncNow);
 </script>

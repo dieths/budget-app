@@ -89,6 +89,10 @@ budget-update
 
 Your token and data are kept.
 
+## iOS app
+
+The repository also contains the iOS shell (Capacitor) for the App Store. Store texts, screenshots and the 1024 icon are in [`docs/appstore`](docs/appstore). In the iOS app, data is additionally kept in the app's own storage, and sync asks for the server address.
+
 ## Sync
 
 In the app, go to ⚙︎ → Sync and enter the token. The app then syncs after every change, when it is opened and when the connection comes back. Expenses logged offline are sent later. Transactions from several devices are merged by their ID, budget changes by time.

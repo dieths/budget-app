@@ -1,0 +1,14 @@
+{
+  "appId": "io.github.dieths.supereasybudget",
+  "appName": "Super Easy Budget",
+  "webDir": "app",
+  "ios": {
+    "contentInset": "never",
+    "backgroundColor": "#f5f5f2"
+  },
+  "plugins": {
+    "CapacitorHttp": {
+      "enabled": true
+    }
+  }
+}
